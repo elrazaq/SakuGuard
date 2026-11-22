@@ -239,4 +239,49 @@
     <string name="dashboard_no_active_wallets">Belum ada dompet aktif.</string>
     <string name="dashboard_no_recent_tx">Belum ada transaksi tercatat.</string>
     <string name="dashboard_no_active_goals">Belum ada target tabungan aktif.</string>
+    <string name="dashboard_budgets_cta">Anggaran</string>
+
+    <!-- Fase 6: Penganggaran & Scroll Bertahap -->
+    <string name="tx_load_more_retry">Gagal memuat lagi. Ketuk untuk ulang</string>
+    <string name="budgets_title">Anggaran</string>
+    <string name="budgets_empty_title">Belum ada anggaran</string>
+    <string name="budgets_empty_body">Atur batas pengeluaran bulanan, mingguan, atau khusus per kategori.</string>
+    <string name="budgets_add_button">Buat Anggaran</string>
+    <string name="budgets_create_title">Buat Anggaran</string>
+    <string name="budgets_edit_title">Ubah Anggaran</string>
+    <string name="budgets_detail_title">Detail Anggaran</string>
+    <string name="budgets_active_section">Anggaran Aktif</string>
+    <string name="budgets_archived_section">Anggaran Diarsipkan (%1$d)</string>
+
+    <string name="budget_name_label">Nama Anggaran</string>
+    <string name="budget_name_hint">cth. Makan Bulanan, Liburan</string>
+    <string name="budget_category_label">Kategori Pengeluaran</string>
+    <string name="budget_limit_label">Batas Anggaran</string>
+    <string name="budget_period_label">Periode</string>
+    <string name="budget_period_monthly">Bulanan (Berulang)</string>
+    <string name="budget_period_weekly">Mingguan (Berulang)</string>
+    <string name="budget_period_custom">Khusus / Terencana</string>
+    <string name="budget_start_date_label">Tanggal Mulai</string>
+    <string name="budget_end_date_label">Tanggal Selesai</string>
+    <string name="budget_alert_80_label">Peringatan saat mencapai 80%</string>
+    <string name="budget_alert_100_label">Peringatan saat melebihi batas (100%)</string>
+    <string name="budget_save_button">Simpan Anggaran</string>
+
+    <string name="budget_spent_format">Terpakai: %1$s</string>
+    <string name="budget_remaining_format">Sisa %1$s</string>
+    <string name="budget_overspent_format">Melebihi %1$s</string>
+    <string name="budget_status_on_track">Aman</string>
+    <string name="budget_status_warning">Mendekati Batas</string>
+    <string name="budget_status_exceeded">Melebihi Batas</string>
+    <string name="budget_alert_80_banner">%1$s telah mencapai 80%% batas anggaran.</string>
+    <string name="budget_alert_100_banner">%1$s telah melebihi batas anggaran.</string>
+
+    <string name="budget_delete_confirm_title">Hapus anggaran ini?</string>
+    <string name="budget_delete_confirm_body">Batas anggaran akan dihapus, sedangkan transaksi Anda tetap tersimpan.</string>
+    <string name="budget_error_name_blank">Nama anggaran tidak boleh kosong.</string>
+    <string name="budget_error_limit_invalid">Masukkan batas anggaran lebih dari 0.</string>
+    <string name="budget_error_category_required">Pilih kategori pengeluaran.</string>
+    <string name="budget_error_overlap">Sudah ada anggaran aktif untuk kategori dan periode ini.</string>
+    <string name="budget_error_date_range">Tanggal selesai tidak boleh sebelum tanggal mulai.</string>
+    <string name="budget_error_generic">Gagal memproses aksi anggaran.</string>
 </resources>

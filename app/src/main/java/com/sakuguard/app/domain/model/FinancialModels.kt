@@ -42,6 +42,18 @@ enum class WithdrawalTarget {
     DIRECT_EXPENSE,
 }
 
+enum class BudgetPeriodType {
+    MONTHLY,
+    WEEKLY,
+    CUSTOM,
+}
+
+enum class BudgetHealthStatus {
+    ON_TRACK,
+    WARNING,
+    EXCEEDED,
+}
+
 data class Wallet(
     val id: String,
     val name: String,
@@ -130,4 +142,40 @@ data class FinancialOverview(
     val allocatedFunds: Long,
     val protectedFunds: Long,
     val freeMoney: Long,
+)
+
+data class Budget(
+    val id: String,
+    val name: String,
+    val categoryId: String,
+    val limitAmount: Long,
+    val periodType: BudgetPeriodType,
+    val startDate: Long,
+    val endDateExclusive: Long,
+    val alert80Enabled: Boolean = true,
+    val alert100Enabled: Boolean = true,
+    val lastAlertedPeriodKey: String? = null,
+    val lastAlertedLevel: Int = 0,
+    val isArchived: Boolean = false,
+    val createdAt: Long,
+    val updatedAt: Long,
+)
+
+data class BudgetSummary(
+    val budget: Budget,
+    val category: Category?,
+    val spentAmount: Long,
+    val remainingAmount: Long,
+    val overspentAmount: Long,
+    val utilizationPermille: Int,
+    val healthStatus: BudgetHealthStatus,
+    val effectiveStart: Long,
+    val effectiveEndExclusive: Long,
+)
+
+data class BudgetAlertEvent(
+    val budgetId: String,
+    val budgetName: String,
+    val periodKey: String,
+    val level: Int,
 )

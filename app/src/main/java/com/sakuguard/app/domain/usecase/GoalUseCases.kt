@@ -281,13 +281,14 @@ class AllocateToGoalUseCase @Inject constructor(
                 createdAt = now,
             )
 
-            val wallets = walletRepository.getAllWallets()
-            val transactions = transactionRepository.getAllTransactions() + tx
-            val allocations = goalRepository.getAllAllocations() + entry
-            LedgerValidator.validateResultingState(wallets, transactions, allocations)
-
             transactionRepository.insertTransaction(tx)
             transactionRepository.insertAllocationEntry(entry)
+            LedgerValidator.validateAffectedWallets(
+                affectedWallets = listOf(wallet),
+                transactionRepository = transactionRepository,
+                allocations = goalRepository.getAllAllocations(),
+                affectedGoalIds = setOf(goalId),
+            )
         }
     }
 }
@@ -390,17 +391,17 @@ class WithdrawFromGoalUseCase @Inject constructor(
                 createdAt = now,
             )
 
-            val wallets = walletRepository.getAllWallets()
-            val newTxs = listOfNotNull(withdrawTx, expenseTx)
-            val transactions = transactionRepository.getAllTransactions() + newTxs
-            val allocations = goalRepository.getAllAllocations() + entry
-            LedgerValidator.validateResultingState(wallets, transactions, allocations)
-
             transactionRepository.insertTransaction(withdrawTx)
             if (expenseTx != null) {
                 transactionRepository.insertTransaction(expenseTx)
             }
             transactionRepository.insertAllocationEntry(entry)
+            LedgerValidator.validateAffectedWallets(
+                affectedWallets = listOf(wallet),
+                transactionRepository = transactionRepository,
+                allocations = goalRepository.getAllAllocations(),
+                affectedGoalIds = setOf(goalId),
+            )
         }
     }
 }

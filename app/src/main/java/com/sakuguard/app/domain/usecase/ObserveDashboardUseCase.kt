@@ -2,10 +2,10 @@ package com.sakuguard.app.domain.usecase
 
 import com.sakuguard.app.domain.engine.FinancialEngine
 import com.sakuguard.app.domain.engine.MonthlyActivity
+import com.sakuguard.app.domain.engine.SafeMath
 import com.sakuguard.app.domain.model.FinancialOverview
 import com.sakuguard.app.domain.model.GoalStatus
 import com.sakuguard.app.domain.model.GoalSummary
-import com.sakuguard.app.domain.model.Transaction
 import com.sakuguard.app.domain.model.WalletSummary
 import com.sakuguard.app.domain.repository.CategoryRepository
 import com.sakuguard.app.domain.repository.GoalRepository
@@ -32,8 +32,8 @@ data class DashboardSnapshot(
 )
 
 /**
- * Observes reactive repository flows and derives dashboard state via [FinancialEngine].
- * Uses `combine` over Room table Flows, converging to the latest committed state after atomic writes.
+ * Observes bounded SQL aggregations and recent transactions (LIMIT 5) for the Dashboard.
+ * Uses `combine` over Room Flows, converging to the latest committed state after atomic writes.
  */
 class ObserveDashboardUseCase @Inject constructor(
     private val walletRepository: WalletRepository,
@@ -44,48 +44,66 @@ class ObserveDashboardUseCase @Inject constructor(
     operator fun invoke(
         zoneId: ZoneId = ZoneId.systemDefault(),
         yearMonth: YearMonth = YearMonth.now(zoneId),
-    ): Flow<DashboardSnapshot> = combine(
-        walletRepository.observeWallets(includeArchived = true),
-        transactionRepository.observeTransactions(),
-        goalRepository.observeGoals(includeArchived = true),
-        goalRepository.observeAllocations(),
-        categoryRepository.observeCategories(includeArchived = true),
-    ) { wallets, transactions, goals, allocations, categories ->
-        val overview = FinancialEngine.calculateFinancialOverview(
-            wallets = wallets,
-            transactions = transactions,
-            goals = goals,
-            allocations = allocations,
-        )
-        val monthlyActivity = FinancialEngine.calculateMonthlyActivity(
-            transactions = transactions,
-            yearMonth = yearMonth,
-            zoneId = zoneId,
-        )
-        val activeWallets = wallets
-            .filterNot { it.isArchived }
-            .map { FinancialEngine.summarizeWallet(it, transactions, allocations) }
-        val activeGoals = goals
-            .filter { it.status == GoalStatus.ACTIVE }
-            .map { goal ->
-                val summary = FinancialEngine.summarizeGoal(goal, allocations)
-                DashboardGoalItem(
-                    summary = summary,
-                    progressPermille = FinancialEngine.calculateGoalProgressPermille(
-                        allocated = summary.allocatedAmount,
-                        target = goal.targetAmount,
-                    ),
-                )
-            }
-        val walletMap = wallets.associateBy { it.id }
-        val categoryMap = categories.associateBy { it.id }
-        val recentTransactions = transactions
-            .sortedWith(
-                compareByDescending<Transaction> { it.transactionDate }
-                    .thenByDescending { it.createdAt },
+    ): Flow<DashboardSnapshot> {
+        val monthStart = yearMonth.atDay(1).atStartOfDay(zoneId).toInstant().toEpochMilli()
+        val monthEndExclusive = yearMonth.plusMonths(1).atDay(1).atStartOfDay(zoneId).toInstant().toEpochMilli()
+
+        return combine(
+            walletRepository.observeWallets(includeArchived = true),
+            transactionRepository.observeAllWalletLedgerTotals(),
+            transactionRepository.observeMonthlyActivity(monthStart, monthEndExclusive),
+            transactionRepository.observeRecentTransactions(limit = 5),
+            goalRepository.observeGoals(includeArchived = true),
+            goalRepository.observeAllocations(),
+            categoryRepository.observeCategories(includeArchived = true),
+        ) { values ->
+            @Suppress("UNCHECKED_CAST")
+            val wallets = values[0] as List<com.sakuguard.app.domain.model.Wallet>
+            @Suppress("UNCHECKED_CAST")
+            val totalsByWallet = values[1] as Map<String, com.sakuguard.app.domain.repository.WalletLedgerTotals>
+            val monthlyTotals = values[2] as com.sakuguard.app.domain.repository.MonthlyActivityTotals
+            @Suppress("UNCHECKED_CAST")
+            val recentTxs = values[3] as List<com.sakuguard.app.domain.model.Transaction>
+            @Suppress("UNCHECKED_CAST")
+            val goals = values[4] as List<com.sakuguard.app.domain.model.Goal>
+            @Suppress("UNCHECKED_CAST")
+            val allocations = values[5] as List<com.sakuguard.app.domain.model.GoalAllocationEntry>
+            @Suppress("UNCHECKED_CAST")
+            val categories = values[6] as List<com.sakuguard.app.domain.model.Category>
+
+            val overview = FinancialEngine.calculateFinancialOverviewFromTotals(
+                wallets = wallets,
+                totalsByWallet = totalsByWallet,
+                goals = goals,
+                allocations = allocations,
             )
-            .take(5)
-            .map { tx ->
+            val monthlyActivity = MonthlyActivity(
+                income = monthlyTotals.income,
+                expenses = monthlyTotals.expenses,
+                netCashFlow = SafeMath.subtract(monthlyTotals.income, monthlyTotals.expenses),
+            )
+            val activeWallets = wallets
+                .filterNot { it.isArchived }
+                .map { wallet ->
+                    val totals = totalsByWallet[wallet.id]
+                        ?: com.sakuguard.app.domain.repository.WalletLedgerTotals(wallet.id, 0L, 0L, 0L, 0L)
+                    FinancialEngine.summarizeWalletFromTotals(wallet, totals, allocations)
+                }
+            val activeGoals = goals
+                .filter { it.status == GoalStatus.ACTIVE }
+                .map { goal ->
+                    val summary = FinancialEngine.summarizeGoal(goal, allocations)
+                    DashboardGoalItem(
+                        summary = summary,
+                        progressPermille = FinancialEngine.calculateGoalProgressPermille(
+                            allocated = summary.allocatedAmount,
+                            target = goal.targetAmount,
+                        ),
+                    )
+                }
+            val walletMap = wallets.associateBy { it.id }
+            val categoryMap = categories.associateBy { it.id }
+            val recentTransactions = recentTxs.map { tx ->
                 TransactionFeedItem(
                     transaction = tx,
                     wallet = walletMap[tx.walletId],
@@ -93,15 +111,16 @@ class ObserveDashboardUseCase @Inject constructor(
                     category = tx.categoryId?.let { categoryMap[it] },
                 )
             }
-        val hasAnyData = wallets.isNotEmpty() || goals.isNotEmpty() || transactions.isNotEmpty()
+            val hasAnyData = wallets.isNotEmpty() || goals.isNotEmpty() || recentTxs.isNotEmpty()
 
-        DashboardSnapshot(
-            overview = overview,
-            monthlyActivity = monthlyActivity,
-            activeWallets = activeWallets,
-            activeGoals = activeGoals,
-            recentTransactions = recentTransactions,
-            hasAnyData = hasAnyData,
-        )
+            DashboardSnapshot(
+                overview = overview,
+                monthlyActivity = monthlyActivity,
+                activeWallets = activeWallets,
+                activeGoals = activeGoals,
+                recentTransactions = recentTransactions,
+                hasAnyData = hasAnyData,
+            )
+        }
     }
 }

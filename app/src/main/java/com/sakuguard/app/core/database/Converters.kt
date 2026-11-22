@@ -1,6 +1,7 @@
 package com.sakuguard.app.core.database
 
 import androidx.room.TypeConverter
+import com.sakuguard.app.domain.model.BudgetPeriodType
 import com.sakuguard.app.domain.model.CategoryType
 import com.sakuguard.app.domain.model.GoalLedgerType
 import com.sakuguard.app.domain.model.GoalStatus
@@ -30,4 +31,7 @@ class Converters {
 
     @TypeConverter fun fromWithdrawalTarget(v: WithdrawalTarget?): String? = v?.name
     @TypeConverter fun toWithdrawalTarget(v: String?): WithdrawalTarget? = v?.let(WithdrawalTarget::valueOf)
+
+    @TypeConverter fun fromBudgetPeriodType(v: BudgetPeriodType): String = v.name
+    @TypeConverter fun toBudgetPeriodType(v: String): BudgetPeriodType = BudgetPeriodType.valueOf(v)
 }

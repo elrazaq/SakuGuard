@@ -82,6 +82,7 @@ fun DashboardScreen(
     onOpenTransactions: () -> Unit = {},
     onTransactionClick: (String) -> Unit = {},
     onAddTransaction: () -> Unit = {},
+    onOpenBudgets: () -> Unit = {},
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -99,6 +100,11 @@ fun DashboardScreen(
                         text = stringResource(R.string.app_name),
                         style = MaterialTheme.typography.titleLarge,
                     )
+                },
+                actions = {
+                    TextButton(onClick = onOpenBudgets) {
+                        Text(text = stringResource(R.string.dashboard_budgets_cta))
+                    }
                 },
                 expandedHeight = 48.dp,
                 colors = TopAppBarDefaults.topAppBarColors(

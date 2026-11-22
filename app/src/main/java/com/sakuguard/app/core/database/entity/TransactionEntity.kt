@@ -40,6 +40,8 @@ import com.sakuguard.app.domain.model.TransactionType
         Index("categoryId"),
         Index("goalId"),
         Index("transactionDate"),
+        Index(value = ["type", "categoryId", "transactionDate"]),
+        Index(value = ["transactionDate", "createdAt", "id"]),
     ],
 )
 data class TransactionEntity(

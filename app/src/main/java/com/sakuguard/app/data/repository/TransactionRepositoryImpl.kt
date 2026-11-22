@@ -8,7 +8,10 @@ import com.sakuguard.app.data.mapper.toDomain
 import com.sakuguard.app.data.mapper.toEntity
 import com.sakuguard.app.domain.model.GoalAllocationEntry
 import com.sakuguard.app.domain.model.Transaction
+import com.sakuguard.app.domain.repository.MonthlyActivityTotals
+import com.sakuguard.app.domain.repository.TransactionPageQuery
 import com.sakuguard.app.domain.repository.TransactionRepository
+import com.sakuguard.app.domain.repository.WalletLedgerTotals
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -21,11 +24,72 @@ class TransactionRepositoryImpl @Inject constructor(
     override fun observeTransactions(): Flow<List<Transaction>> =
         transactionDao.observeTransactions().map { list -> list.map { it.toDomain() } }
 
+    override fun observeRecentTransactions(limit: Int): Flow<List<Transaction>> =
+        transactionDao.observeRecentTransactions(limit).map { list -> list.map { it.toDomain() } }
+
+    override fun observeAllWalletLedgerTotals(): Flow<Map<String, WalletLedgerTotals>> =
+        transactionDao.observeAllWalletLedgerTotals().map { list ->
+            list.associate {
+                it.walletId to WalletLedgerTotals(
+                    walletId = it.walletId,
+                    incomeSum = it.incomeSum,
+                    expenseSum = it.expenseSum,
+                    outgoingTransferSum = it.outgoingTransferSum,
+                    incomingTransferSum = it.incomingTransferSum,
+                )
+            }
+        }
+
+    override fun observeMonthlyActivity(startInclusive: Long, endExclusive: Long): Flow<MonthlyActivityTotals> =
+        transactionDao.observeMonthlyActivity(startInclusive, endExclusive).map {
+            MonthlyActivityTotals(income = it.income, expenses = it.expenses)
+        }
+
+    override fun observeExpenseSumForCategoryPeriod(
+        categoryId: String,
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Flow<Long> = transactionDao.observeExpenseSumForCategoryPeriod(categoryId, startInclusive, endExclusive)
+
     override suspend fun getAllTransactions(): List<Transaction> =
         transactionDao.getAllTransactions().map { it.toDomain() }
 
     override suspend fun getTransactionById(id: String): Transaction? =
         transactionDao.getTransactionById(id)?.toDomain()
+
+    override suspend fun getWalletLedgerTotals(walletId: String): WalletLedgerTotals {
+        val tuple = transactionDao.getWalletLedgerTotals(walletId)
+        return WalletLedgerTotals(
+            walletId = tuple.walletId,
+            incomeSum = tuple.incomeSum,
+            expenseSum = tuple.expenseSum,
+            outgoingTransferSum = tuple.outgoingTransferSum,
+            incomingTransferSum = tuple.incomingTransferSum,
+        )
+    }
+
+    override suspend fun getExpenseSumForCategoryPeriod(
+        categoryId: String,
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Long = transactionDao.getExpenseSumForCategoryPeriod(categoryId, startInclusive, endExclusive)
+
+    override suspend fun getTransactionsPage(query: TransactionPageQuery): List<Transaction> {
+        val hasCursor = query.cursorDate != null && query.cursorCreatedAt != null && query.cursorId != null
+        return transactionDao.getTransactionsPage(
+            type = query.type,
+            walletId = query.walletId,
+            categoryId = query.categoryId,
+            startDate = query.startDate,
+            endDateExclusive = query.endDateExclusive,
+            searchQuery = query.searchQuery?.trim()?.takeIf { it.isNotEmpty() },
+            hasCursor = hasCursor,
+            cursorDate = query.cursorDate ?: 0L,
+            cursorCreatedAt = query.cursorCreatedAt ?: 0L,
+            cursorId = query.cursorId ?: "",
+            limit = query.limit,
+        ).map { it.toDomain() }
+    }
 
     override suspend fun getAllocationByTransactionId(transactionId: String): GoalAllocationEntry? =
         goalAllocationDao.getByTransactionId(transactionId)?.toDomain()

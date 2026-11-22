@@ -239,4 +239,49 @@
     <string name="dashboard_no_active_wallets">No active wallets yet.</string>
     <string name="dashboard_no_recent_tx">No transactions recorded yet.</string>
     <string name="dashboard_no_active_goals">No active savings goals yet.</string>
+    <string name="dashboard_budgets_cta">Budgets</string>
+
+    <!-- Phase 6: Budgeting & Incremental Scroll -->
+    <string name="tx_load_more_retry">Failed to load more. Tap to retry</string>
+    <string name="budgets_title">Budgets</string>
+    <string name="budgets_empty_title">No budgets yet</string>
+    <string name="budgets_empty_body">Set monthly, weekly, or custom spending limits per expense category.</string>
+    <string name="budgets_add_button">Create Budget</string>
+    <string name="budgets_create_title">Create Budget</string>
+    <string name="budgets_edit_title">Edit Budget</string>
+    <string name="budgets_detail_title">Budget Details</string>
+    <string name="budgets_active_section">Active Budgets</string>
+    <string name="budgets_archived_section">Archived Budgets (%1$d)</string>
+
+    <string name="budget_name_label">Budget Name</string>
+    <string name="budget_name_hint">e.g. Monthly Food, Vacation</string>
+    <string name="budget_category_label">Expense Category</string>
+    <string name="budget_limit_label">Spending Limit</string>
+    <string name="budget_period_label">Period</string>
+    <string name="budget_period_monthly">Monthly (Recurring)</string>
+    <string name="budget_period_weekly">Weekly (Recurring)</string>
+    <string name="budget_period_custom">Custom / Planned</string>
+    <string name="budget_start_date_label">Start Date</string>
+    <string name="budget_end_date_label">End Date</string>
+    <string name="budget_alert_80_label">Warn at 80% utilization</string>
+    <string name="budget_alert_100_label">Warn when limit exceeded (100%)</string>
+    <string name="budget_save_button">Save Budget</string>
+
+    <string name="budget_spent_format">Spent: %1$s</string>
+    <string name="budget_remaining_format">%1$s left</string>
+    <string name="budget_overspent_format">Over by %1$s</string>
+    <string name="budget_status_on_track">On Track</string>
+    <string name="budget_status_warning">Near Limit</string>
+    <string name="budget_status_exceeded">Exceeded</string>
+    <string name="budget_alert_80_banner">%1$s reached 80%% of its limit.</string>
+    <string name="budget_alert_100_banner">%1$s exceeded its budget limit.</string>
+
+    <string name="budget_delete_confirm_title">Delete this budget?</string>
+    <string name="budget_delete_confirm_body">This removes the budget limit. Your transactions remain intact.</string>
+    <string name="budget_error_name_blank">Budget name cannot be empty.</string>
+    <string name="budget_error_limit_invalid">Enter a spending limit greater than 0.</string>
+    <string name="budget_error_category_required">Select an expense category.</string>
+    <string name="budget_error_overlap">An active budget already exists for this category and period.</string>
+    <string name="budget_error_date_range">End date cannot be earlier than start date.</string>
+    <string name="budget_error_generic">Unable to complete budget action.</string>
 </resources>

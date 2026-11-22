@@ -2,19 +2,60 @@ package com.sakuguard.app.domain.repository
 
 import com.sakuguard.app.domain.model.GoalAllocationEntry
 import com.sakuguard.app.domain.model.Transaction
+import com.sakuguard.app.domain.model.TransactionType
 import kotlinx.coroutines.flow.Flow
+
+data class WalletLedgerTotals(
+    val walletId: String,
+    val incomeSum: Long,
+    val expenseSum: Long,
+    val outgoingTransferSum: Long,
+    val incomingTransferSum: Long,
+)
+
+data class MonthlyActivityTotals(
+    val income: Long,
+    val expenses: Long,
+)
+
+data class TransactionPageQuery(
+    val type: TransactionType? = null,
+    val walletId: String? = null,
+    val categoryId: String? = null,
+    val startDate: Long? = null,
+    val endDateExclusive: Long? = null,
+    val searchQuery: String? = null,
+    val cursorDate: Long? = null,
+    val cursorCreatedAt: Long? = null,
+    val cursorId: String? = null,
+    val limit: Int = 20,
+)
 
 interface TransactionRepository {
     fun observeTransactions(): Flow<List<Transaction>>
+    fun observeRecentTransactions(limit: Int = 5): Flow<List<Transaction>>
+    fun observeAllWalletLedgerTotals(): Flow<Map<String, WalletLedgerTotals>>
+    fun observeMonthlyActivity(startInclusive: Long, endExclusive: Long): Flow<MonthlyActivityTotals>
+    fun observeExpenseSumForCategoryPeriod(
+        categoryId: String,
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Flow<Long>
+
     suspend fun getAllTransactions(): List<Transaction>
     suspend fun getTransactionById(id: String): Transaction?
+    suspend fun getWalletLedgerTotals(walletId: String): WalletLedgerTotals
+    suspend fun getExpenseSumForCategoryPeriod(
+        categoryId: String,
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Long
+
+    suspend fun getTransactionsPage(query: TransactionPageQuery): List<Transaction>
+
     suspend fun getAllocationByTransactionId(transactionId: String): GoalAllocationEntry?
     suspend fun getAllocationByLinkedExpenseId(expenseTransactionId: String): GoalAllocationEntry?
 
-    /**
-     * Atomically validates and persists a new transaction (and any linked goal/expense entries).
-     * Implementations must execute inside a single database transaction and roll back on failure.
-     */
     suspend fun runInTransaction(block: suspend () -> Unit)
 
     suspend fun insertTransaction(transaction: Transaction)

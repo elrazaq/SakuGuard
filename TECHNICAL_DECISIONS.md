@@ -40,3 +40,10 @@
 ## TD-011: Dashboard Reactive Observation & Privacy Masking
 - **Decision**: `ObserveDashboardUseCase` combines the 5 repository Room Flows and converges to the latest committed database state after atomic writes (without claiming cross-table SQLite snapshot atomicity on `combine`).
 - **Decision**: `DashboardViewModel` holds `amountsHidden` in presentation state so toggling privacy masks all dashboard monetary values without altering `DashboardSnapshot`.
+
+## TD-012: SQL-Aggregated Ledger Validation & Keyset Transaction Paging
+- **Decision**: Replace full-history `getAllTransactions()` loads in `LedgerValidator`, `ObserveDashboardUseCase`, and `TransactionsScreen` with indexed SQL component-sum queries (`WalletLedgerTotals`, `MonthlyActivityTuple`), `LIMIT 5` recent queries, and 3-column keyset paging (`transactionDate`, `createdAt`, `id`, `BATCH_SIZE = 20`).
+- **Rationale**: Keeps memory and write validation bounded as ledger history grows while preserving every `SafeMath`, resulting-state, transfer, tracking-date, and Protected Funds invariant inside `runInTransaction`.
+
+## TD-013: Budget Overlap Prevention & Alert Deduplication
+- **Decision**: Enforce strict non-overlapping active budget envelopes per `categoryId` across all 6 `MONTHLY` / `WEEKLY` / `CUSTOM` combinations (`BudgetPeriodResolver.overlaps`), and persist `lastAlertedPeriodKey` + `lastAlertedLevel` inside `runInTransaction` to deduplicate 80%/100% in-app threshold alerts per period.

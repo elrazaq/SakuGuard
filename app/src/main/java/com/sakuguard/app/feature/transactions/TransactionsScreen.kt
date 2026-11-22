@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -42,9 +43,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -154,7 +158,22 @@ fun TransactionsScreen(
                         val grouped = remember(uiState.items) {
                             uiState.items.groupBy { DateFormatter.formatMonthYear(it.transaction.transactionDate) }
                         }
+                        val listState = rememberLazyListState()
+                        val shouldLoadMore by remember {
+                            derivedStateOf {
+                                val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+                                val totalCount = listState.layoutInfo.totalItemsCount
+                                totalCount > 0 && lastVisible >= totalCount - 4
+                            }
+                        }
+                        LaunchedEffect(shouldLoadMore, uiState.hasMore, uiState.isLoadingMore) {
+                            if (shouldLoadMore && uiState.hasMore && !uiState.isLoadingMore) {
+                                viewModel.loadNextPage()
+                            }
+                        }
+
                         LazyColumn(
+                            state = listState,
                             modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(
                                 start = SakuSpacing.lg,
@@ -181,6 +200,32 @@ fun TransactionsScreen(
                                         item = item,
                                         onClick = { onTransactionClick(item.transaction.id) },
                                     )
+                                }
+                            }
+                            if (uiState.isLoadingMore) {
+                                item(key = "tx-loading-more") {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(SakuSpacing.md),
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                                    }
+                                }
+                            }
+                            if (uiState.loadMoreError) {
+                                item(key = "tx-load-more-retry") {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(SakuSpacing.sm),
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        TextButton(onClick = viewModel::retryLoadMore) {
+                                            Text(stringResource(R.string.tx_load_more_retry))
+                                        }
+                                    }
                                 }
                             }
                         }

@@ -1,10 +1,12 @@
 package com.sakuguard.app.data.mapper
 
+import com.sakuguard.app.core.database.entity.BudgetEntity
 import com.sakuguard.app.core.database.entity.CategoryEntity
 import com.sakuguard.app.core.database.entity.GoalAllocationEntity
 import com.sakuguard.app.core.database.entity.GoalEntity
 import com.sakuguard.app.core.database.entity.TransactionEntity
 import com.sakuguard.app.core.database.entity.WalletEntity
+import com.sakuguard.app.domain.model.Budget
 import com.sakuguard.app.domain.model.Category
 import com.sakuguard.app.domain.model.Goal
 import com.sakuguard.app.domain.model.GoalAllocationEntry
@@ -147,4 +149,38 @@ fun GoalAllocationEntry.toEntity(): GoalAllocationEntity = GoalAllocationEntity(
     reason = reason,
     withdrawalTarget = withdrawalTarget,
     createdAt = createdAt,
+)
+
+fun BudgetEntity.toDomain(): Budget = Budget(
+    id = id,
+    name = name,
+    categoryId = categoryId,
+    limitAmount = limitAmount,
+    periodType = periodType,
+    startDate = startDate,
+    endDateExclusive = endDateExclusive,
+    alert80Enabled = alert80Enabled,
+    alert100Enabled = alert100Enabled,
+    lastAlertedPeriodKey = lastAlertedPeriodKey,
+    lastAlertedLevel = lastAlertedLevel,
+    isArchived = isArchived,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+)
+
+fun Budget.toEntity(): BudgetEntity = BudgetEntity(
+    id = id,
+    name = name,
+    categoryId = categoryId,
+    limitAmount = limitAmount,
+    periodType = periodType,
+    startDate = startDate,
+    endDateExclusive = endDateExclusive,
+    alert80Enabled = alert80Enabled,
+    alert100Enabled = alert100Enabled,
+    lastAlertedPeriodKey = lastAlertedPeriodKey,
+    lastAlertedLevel = lastAlertedLevel,
+    isArchived = isArchived,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
 )

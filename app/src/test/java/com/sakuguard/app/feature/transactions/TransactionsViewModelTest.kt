@@ -8,7 +8,6 @@ import com.sakuguard.app.domain.model.TransactionType
 import com.sakuguard.app.domain.model.Wallet
 import com.sakuguard.app.domain.model.WalletType
 import com.sakuguard.app.domain.usecase.InMemoryLedgerStore
-import com.sakuguard.app.domain.usecase.ObserveTransactionsFeedUseCase
 import com.sakuguard.app.domain.usecase.RecordTransactionUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -35,7 +34,9 @@ class TransactionsViewModelTest {
         Dispatchers.setMain(testDispatcher)
         store = InMemoryLedgerStore()
         viewModel = TransactionsViewModel(
-            observeTransactionsFeedUseCase = ObserveTransactionsFeedUseCase(store, store, store),
+            transactionRepository = store,
+            walletRepository = store,
+            categoryRepository = store,
         )
     }
 
@@ -90,6 +91,53 @@ class TransactionsViewModelTest {
         advanceUntilIdle()
         // Cash is wallet on t2 and destinationWallet on t3
         assertThat(viewModel.uiState.value.items.map { it.transaction.id }).containsExactly("t2", "t3")
+
+        job.cancel()
+    }
+
+    @Test
+    fun `incremental keyset scroll loads 20 items then appends remaining without duplicates`() = runTest {
+        val now = 1_700_000_000_000L
+        val bank = Wallet("w1", "BCA", WalletType.BANK_ACCOUNT, 50_000_000L, 0L, createdAt = 0L, updatedAt = 0L)
+        val food = Category("c2", "Food", CategoryType.EXPENSE, "restaurant", 0xFFD97706L, createdAt = 0L)
+        store.createWallet(bank)
+        store.upsertCategory(food)
+
+        val record = RecordTransactionUseCase(store, store, store, store)
+        repeat(45) { idx ->
+            val ts = now + idx * 1_000L
+            record(
+                Transaction(
+                    id = "tx-${idx.toString().padStart(2, '0')}",
+                    type = TransactionType.EXPENSE,
+                    amount = 10_000L,
+                    walletId = bank.id,
+                    categoryId = food.id,
+                    notes = "Meal $idx",
+                    transactionDate = ts,
+                    createdAt = ts,
+                    updatedAt = ts,
+                ),
+            )
+        }
+
+        val job = backgroundScope.launch { viewModel.uiState.collect() }
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.items).hasSize(20)
+        assertThat(viewModel.uiState.value.hasMore).isTrue()
+        assertThat(viewModel.uiState.value.items.first().transaction.id).isEqualTo("tx-44")
+
+        viewModel.loadNextPage()
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value.items).hasSize(40)
+        assertThat(viewModel.uiState.value.hasMore).isTrue()
+
+        viewModel.loadNextPage()
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value.items).hasSize(45)
+        assertThat(viewModel.uiState.value.hasMore).isFalse()
+        assertThat(viewModel.uiState.value.items.map { it.transaction.id }.distinct()).hasSize(45)
 
         job.cancel()
     }

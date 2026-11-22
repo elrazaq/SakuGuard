@@ -42,3 +42,12 @@
 - Added `FinancialEngine.calculateMonthlyActivity` (`MonthlyActivity`) using `SafeMath` and explicit `YearMonth`/`ZoneId` local calendar-month boundaries (excluding `TRANSFER`, `GOAL_ALLOCATION`, `GOAL_WITHDRAWAL`).
 - Added `ObserveDashboardUseCase`, `DashboardViewModel` (with presentation-layer `amountsHidden` privacy toggle masking all dashboard monetary figures), and `DashboardScreen` with independent section empty states and navigation to detail/list/create screens.
 - Added `ObserveDashboardUseCaseTest` and `DashboardViewModelTest`.
+
+## Phase 6 — Budgeting & Scalability Architecture (2026-11-22)
+- Upgraded `SakuGuardDatabase` to `version = 2` with `BudgetEntity` (`budgets`), `BudgetDao`, `MIGRATION_1_2` (non-destructive), and composite `transactions` indices (`(type, categoryId, transactionDate)` and `(transactionDate, createdAt, id)`).
+- Remediated scalability bottlenecks without weakening financial invariants:
+  - `LedgerValidator.validateAffectedWallets`: SQL component-sum aggregation (`WalletLedgerTotals`) inside `runInTransaction` preserving `SafeMath`, transfers, tracking-date checks, goal/protected-funds bounds, and archive guards.
+  - `ObserveDashboardUseCase`: bounded queries (`observeRecentTransactions(5)`, `observeMonthlyActivity`, `observeAllWalletLedgerTotals`).
+  - `TransactionsScreen` & `TransactionsViewModel`: 3-column keyset incremental scroll (`BATCH_SIZE = 20`) with SQL-level filters and inline retry.
+- Implemented `BudgetPeriodResolver` (`MONTHLY`, `WEEKLY`, `CUSTOM`), 6-case cross-period overlap prevention per category, `BudgetUseCases` (CRUD/Archive/Restore + `ObserveBudgetsUseCase` + `EvaluateBudgetAlertsUseCase` with per-period deduplication), and Budget UI (`BudgetsScreen`, `BudgetFormScreen`, `BudgetDetailScreen`).
+- Added unit tests (`FinancialEngineBudgetTest`, `BudgetUseCasesTest`, `BudgetsViewModelTest`, updated `TransactionsViewModelTest` for keyset paging) and `Migration1To2AndQueryPlanTest` (`androidTest`).

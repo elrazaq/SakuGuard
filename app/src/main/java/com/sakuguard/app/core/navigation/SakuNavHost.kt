@@ -8,6 +8,9 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.sakuguard.app.feature.budgets.BudgetDetailScreen
+import com.sakuguard.app.feature.budgets.BudgetFormScreen
+import com.sakuguard.app.feature.budgets.BudgetsScreen
 import com.sakuguard.app.feature.dashboard.DashboardScreen
 import com.sakuguard.app.feature.goals.GoalAllocateScreen
 import com.sakuguard.app.feature.goals.GoalDetailScreen
@@ -31,6 +34,9 @@ object SakuRoutes {
     const val GOAL_FORM = "goal_form?goalId={goalId}"
     const val GOAL_ALLOCATE = "goal_allocate/{goalId}"
     const val GOAL_WITHDRAW = "goal_withdraw/{goalId}"
+    const val BUDGETS = "budgets"
+    const val BUDGET_DETAIL = "budget_detail/{budgetId}"
+    const val BUDGET_FORM = "budget_form?budgetId={budgetId}"
 
     fun walletDetail(walletId: String): String = "wallet_detail/$walletId"
     fun walletCreate(): String = "wallet_form"
@@ -45,6 +51,11 @@ object SakuRoutes {
     fun goalEdit(goalId: String): String = "goal_form?goalId=$goalId"
     fun goalAllocate(goalId: String): String = "goal_allocate/$goalId"
     fun goalWithdraw(goalId: String): String = "goal_withdraw/$goalId"
+
+    fun budgets(): String = BUDGETS
+    fun budgetDetail(budgetId: String): String = "budget_detail/$budgetId"
+    fun budgetCreate(): String = "budget_form"
+    fun budgetEdit(budgetId: String): String = "budget_form?budgetId=$budgetId"
 }
 
 @Composable
@@ -68,6 +79,7 @@ fun SakuNavHost(
                 onOpenTransactions = { navigateToTab(navController, SakuDestination.Transactions.route) },
                 onTransactionClick = { txId -> navController.navigate(SakuRoutes.transactionDetail(txId)) },
                 onAddTransaction = { navController.navigate(SakuRoutes.transactionCreate()) },
+                onOpenBudgets = { navController.navigate(SakuRoutes.budgets()) },
             )
         }
         composable(SakuDestination.Wallets.route) {
@@ -181,6 +193,36 @@ fun SakuNavHost(
             )
         }
         composable(SakuDestination.Reports.route) { ReportsScreen() }
+        composable(SakuRoutes.BUDGETS) {
+            BudgetsScreen(
+                onBack = { navController.popBackStack() },
+                onCreateBudget = { navController.navigate(SakuRoutes.budgetCreate()) },
+                onBudgetClick = { budgetId -> navController.navigate(SakuRoutes.budgetDetail(budgetId)) },
+            )
+        }
+        composable(
+            route = SakuRoutes.BUDGET_DETAIL,
+            arguments = listOf(navArgument("budgetId") { type = NavType.StringType }),
+        ) {
+            BudgetDetailScreen(
+                onBack = { navController.popBackStack() },
+                onEdit = { budgetId -> navController.navigate(SakuRoutes.budgetEdit(budgetId)) },
+            )
+        }
+        composable(
+            route = SakuRoutes.BUDGET_FORM,
+            arguments = listOf(
+                navArgument("budgetId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+            ),
+        ) {
+            BudgetFormScreen(
+                onBack = { navController.popBackStack() },
+            )
+        }
     }
 }
 

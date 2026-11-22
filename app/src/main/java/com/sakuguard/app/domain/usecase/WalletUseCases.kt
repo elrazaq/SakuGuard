@@ -118,12 +118,12 @@ class UpdateWalletUseCase @Inject constructor(
                     )
                 }
             }
-            val wallets = walletRepository.getAllWallets().map {
-                if (it.id == normalized.id) normalized else it
-            }
-            val allocations = goalRepository.getAllAllocations()
-            LedgerValidator.validateResultingState(wallets, transactions, allocations)
             walletRepository.updateWallet(normalized)
+            LedgerValidator.validateAffectedWallets(
+                affectedWallets = listOf(normalized),
+                transactionRepository = transactionRepository,
+                allocations = goalRepository.getAllAllocations(),
+            )
         }
     }
 }

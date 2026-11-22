@@ -113,12 +113,14 @@ class RecordTransactionUseCase @Inject constructor(
                 else -> Unit
             }
 
-            val wallets = walletRepository.getAllWallets()
-            val transactions = transactionRepository.getAllTransactions() + transaction
-            val allocations = goalRepository.getAllAllocations()
-            LedgerValidator.validateResultingState(wallets, transactions, allocations)
-
             transactionRepository.insertTransaction(transaction)
+            val affectedIds = listOfNotNull(transaction.walletId, transaction.destinationWalletId).distinct()
+            val affectedWallets = affectedIds.mapNotNull { walletRepository.getWalletById(it) }
+            LedgerValidator.validateAffectedWallets(
+                affectedWallets = affectedWallets,
+                transactionRepository = transactionRepository,
+                allocations = goalRepository.getAllAllocations(),
+            )
         }
     }
 }
@@ -201,9 +203,6 @@ class UpdateTransactionUseCase @Inject constructor(
                 else -> Unit
             }
 
-            val currentTransactions = transactionRepository.getAllTransactions()
-            val currentAllocations = goalRepository.getAllAllocations()
-
             val linkedAllocForExpense = transactionRepository.getAllocationByLinkedExpenseId(existing.id)
             if (linkedAllocForExpense != null) {
                 throw DomainException.InvalidTransactionMutationException(
@@ -211,14 +210,12 @@ class UpdateTransactionUseCase @Inject constructor(
                 )
             }
 
-            val updatedTransactions = currentTransactions.map { if (it.id == updated.id) updated else it }
-            LedgerValidator.validateResultingState(
-                wallets = walletRepository.getAllWallets(),
-                transactions = updatedTransactions,
-                allocations = currentAllocations,
-            )
-
             transactionRepository.updateTransactionRecord(updated)
+            LedgerValidator.validateAffectedWallets(
+                affectedWallets = affectedWallets.values.toList(),
+                transactionRepository = transactionRepository,
+                allocations = goalRepository.getAllAllocations(),
+            )
         }
     }
 }
@@ -242,7 +239,7 @@ class DeleteTransactionUseCase @Inject constructor(
             }
 
             val affectedWalletIds = listOfNotNull(existing.walletId, existing.destinationWalletId).distinct()
-            for (wId in affectedWalletIds) {
+            val affectedWallets = affectedWalletIds.map { wId ->
                 val wallet = walletRepository.getWalletById(wId)
                     ?: throw DomainException.EntityNotFoundException("Wallet not found: $wId")
                 if (wallet.isArchived) {
@@ -250,6 +247,7 @@ class DeleteTransactionUseCase @Inject constructor(
                         "Cannot delete transaction involving archived wallet '${wallet.name}'",
                     )
                 }
+                wallet
             }
 
             val linkedAlloc = transactionRepository.getAllocationByLinkedExpenseId(existing.id)
@@ -259,15 +257,12 @@ class DeleteTransactionUseCase @Inject constructor(
                 )
             }
 
-            val remainingTxs = transactionRepository.getAllTransactions().filterNot { it.id == existing.id }
-
-            LedgerValidator.validateResultingState(
-                wallets = walletRepository.getAllWallets(),
-                transactions = remainingTxs,
+            transactionRepository.deleteTransactionById(existing.id)
+            LedgerValidator.validateAffectedWallets(
+                affectedWallets = affectedWallets,
+                transactionRepository = transactionRepository,
                 allocations = goalRepository.getAllAllocations(),
             )
-
-            transactionRepository.deleteTransactionById(existing.id)
         }
     }
 }
