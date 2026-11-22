@@ -47,3 +47,7 @@
 
 ## TD-013: Budget Overlap Prevention & Alert Deduplication
 - **Decision**: Enforce strict non-overlapping active budget envelopes per `categoryId` across all 6 `MONTHLY` / `WEEKLY` / `CUSTOM` combinations (`BudgetPeriodResolver.overlaps`), and persist `lastAlertedPeriodKey` + `lastAlertedLevel` inside `runInTransaction` to deduplicate 80%/100% in-app threshold alerts per period.
+
+## TD-014: Reports SQL Aggregation, Transfer Separation & Historical Semantics
+- **Decision**: Implement Phase 7 Reports with zero DB migration on `SakuGuardDatabase v2`, using native Compose `Canvas` charts and SQL aggregation (`TransactionDao`, `GoalAllocationDao` joined on `transactions.transactionDate`).
+- **Decision**: Separate `Transfer In` and `Transfer Out` per wallet in Wallet Activity while excluding transfers from Total Income, Total Expense, and Net Cash Flow; use `BigInteger` for overflow-safe trend/category percentages (`null` on zero baseline); and document current-name/current-limit semantics for historical categories and budgets without adding snapshot tables.

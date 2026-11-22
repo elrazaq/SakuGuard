@@ -6,8 +6,10 @@ import com.sakuguard.app.data.mapper.toDomain
 import com.sakuguard.app.data.mapper.toEntity
 import com.sakuguard.app.domain.model.Goal
 import com.sakuguard.app.domain.model.GoalAllocationEntry
+import com.sakuguard.app.domain.model.GoalLedgerType
 import com.sakuguard.app.domain.model.GoalStatus
 import com.sakuguard.app.domain.model.ProtectionMode
+import com.sakuguard.app.domain.repository.GoalPeriodContributionTotals
 import com.sakuguard.app.domain.repository.GoalRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -22,6 +24,17 @@ class GoalRepositoryImpl @Inject constructor(
 
     override fun observeAllocations(): Flow<List<GoalAllocationEntry>> =
         goalAllocationDao.observeAllocations().map { list -> list.map { it.toDomain() } }
+
+    override fun observePeriodGoalContributions(
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Flow<GoalPeriodContributionTotals> =
+        goalAllocationDao.observePeriodGoalContributions(startInclusive, endExclusive).map { tuples ->
+            GoalPeriodContributionTotals(
+                allocated = tuples.firstOrNull { it.entryType == GoalLedgerType.ALLOCATION }?.totalAmount ?: 0L,
+                withdrawn = tuples.firstOrNull { it.entryType == GoalLedgerType.WITHDRAWAL }?.totalAmount ?: 0L,
+            )
+        }
 
     override suspend fun getAllGoals(): List<Goal> =
         goalDao.getAllGoals().map { it.toDomain() }

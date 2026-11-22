@@ -6,13 +6,18 @@ import com.sakuguard.app.domain.model.Budget
 import com.sakuguard.app.domain.model.Category
 import com.sakuguard.app.domain.model.Goal
 import com.sakuguard.app.domain.model.GoalAllocationEntry
+import com.sakuguard.app.domain.model.GoalLedgerType
 import com.sakuguard.app.domain.model.GoalStatus
 import com.sakuguard.app.domain.model.ProtectionMode
+import com.sakuguard.app.domain.model.ReportCashFlowBucket
+import com.sakuguard.app.domain.model.ReportTimeBucket
 import com.sakuguard.app.domain.model.Transaction
 import com.sakuguard.app.domain.model.TransactionType
 import com.sakuguard.app.domain.model.Wallet
 import com.sakuguard.app.domain.repository.BudgetRepository
 import com.sakuguard.app.domain.repository.CategoryRepository
+import com.sakuguard.app.domain.repository.CategoryTotal
+import com.sakuguard.app.domain.repository.GoalPeriodContributionTotals
 import com.sakuguard.app.domain.repository.GoalRepository
 import com.sakuguard.app.domain.repository.MonthlyActivityTotals
 import com.sakuguard.app.domain.repository.TransactionPageQuery
@@ -68,6 +73,24 @@ class InMemoryLedgerStore :
     override fun observeGoals(includeArchived: Boolean): Flow<List<Goal>> =
         goals.map { list -> if (includeArchived) list else list.filterNot { it.status == GoalStatus.ARCHIVED } }
     override fun observeAllocations(): Flow<List<GoalAllocationEntry>> = allocations
+    override fun observePeriodGoalContributions(
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Flow<GoalPeriodContributionTotals> = combine(allocations, transactions) { allocs, txs ->
+        val txDateById = txs.associate { it.id to it.transactionDate }
+        var allocatedSum = 0L
+        var withdrawnSum = 0L
+        for (entry in allocs) {
+            val eventDate = txDateById[entry.transactionId] ?: continue
+            if (eventDate in startInclusive until endExclusive) {
+                when (entry.entryType) {
+                    GoalLedgerType.ALLOCATION -> allocatedSum = SafeMath.add(allocatedSum, entry.amount)
+                    GoalLedgerType.WITHDRAWAL -> withdrawnSum = SafeMath.add(withdrawnSum, entry.amount)
+                }
+            }
+        }
+        GoalPeriodContributionTotals(allocated = allocatedSum, withdrawn = withdrawnSum)
+    }
     override suspend fun getAllGoals(): List<Goal> = goals.value
     override suspend fun getGoalById(id: String): Goal? = goals.value.firstOrNull { it.id == id }
     override suspend fun getAllAllocations(): List<GoalAllocationEntry> = allocations.value
@@ -103,6 +126,44 @@ class InMemoryLedgerStore :
                 }
             }
             MonthlyActivityTotals(inc, exp)
+        }
+
+    override fun observeCategoryTotalsForPeriod(
+        type: TransactionType,
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Flow<List<CategoryTotal>> = transactions.map { list ->
+        val sums = linkedMapOf<String?, Long>()
+        for (tx in list) {
+            if (tx.type == type && tx.transactionDate in startInclusive until endExclusive) {
+                val prev = sums[tx.categoryId] ?: 0L
+                sums[tx.categoryId] = SafeMath.add(prev, tx.amount)
+            }
+        }
+        sums.entries
+            .map { CategoryTotal(categoryId = it.key, totalAmount = it.value) }
+            .sortedByDescending { it.totalAmount }
+    }
+
+    override fun observeWalletActivityForPeriod(
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Flow<Map<String, WalletLedgerTotals>> = combine(wallets, transactions) { wList, tList ->
+        val inPeriod = tList.filter { it.transactionDate in startInclusive until endExclusive }
+        wList.associate { w -> w.id to computeTotalsForWallet(w.id, inPeriod) }
+    }
+
+    override suspend fun getTimeSeriesBuckets(buckets: List<ReportTimeBucket>): List<ReportCashFlowBucket> =
+        buckets.map { bucket ->
+            var inc = 0L
+            var exp = 0L
+            for (tx in transactions.value) {
+                if (tx.transactionDate in bucket.startInclusive until bucket.endExclusive) {
+                    if (tx.type == TransactionType.INCOME) inc = SafeMath.add(inc, tx.amount)
+                    if (tx.type == TransactionType.EXPENSE) exp = SafeMath.add(exp, tx.amount)
+                }
+            }
+            ReportCashFlowBucket(label = bucket.label, income = inc, expense = exp)
         }
 
     override fun observeExpenseSumForCategoryPeriod(

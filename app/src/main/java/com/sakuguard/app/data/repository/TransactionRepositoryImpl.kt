@@ -7,7 +7,11 @@ import com.sakuguard.app.core.database.dao.TransactionDao
 import com.sakuguard.app.data.mapper.toDomain
 import com.sakuguard.app.data.mapper.toEntity
 import com.sakuguard.app.domain.model.GoalAllocationEntry
+import com.sakuguard.app.domain.model.ReportCashFlowBucket
+import com.sakuguard.app.domain.model.ReportTimeBucket
 import com.sakuguard.app.domain.model.Transaction
+import com.sakuguard.app.domain.model.TransactionType
+import com.sakuguard.app.domain.repository.CategoryTotal
 import com.sakuguard.app.domain.repository.MonthlyActivityTotals
 import com.sakuguard.app.domain.repository.TransactionPageQuery
 import com.sakuguard.app.domain.repository.TransactionRepository
@@ -43,6 +47,43 @@ class TransactionRepositoryImpl @Inject constructor(
     override fun observeMonthlyActivity(startInclusive: Long, endExclusive: Long): Flow<MonthlyActivityTotals> =
         transactionDao.observeMonthlyActivity(startInclusive, endExclusive).map {
             MonthlyActivityTotals(income = it.income, expenses = it.expenses)
+        }
+
+    override fun observeCategoryTotalsForPeriod(
+        type: TransactionType,
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Flow<List<CategoryTotal>> =
+        transactionDao.observeCategoryTotalsForPeriod(type, startInclusive, endExclusive).map { list ->
+            list.map { CategoryTotal(categoryId = it.categoryId, totalAmount = it.totalAmount) }
+        }
+
+    override fun observeWalletActivityForPeriod(
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Flow<Map<String, WalletLedgerTotals>> =
+        transactionDao.observeWalletActivityForPeriod(startInclusive, endExclusive).map { list ->
+            list.associate {
+                it.walletId to WalletLedgerTotals(
+                    walletId = it.walletId,
+                    incomeSum = it.incomeSum,
+                    expenseSum = it.expenseSum,
+                    outgoingTransferSum = it.outgoingTransferSum,
+                    incomingTransferSum = it.incomingTransferSum,
+                )
+            }
+        }
+
+    override suspend fun getTimeSeriesBuckets(buckets: List<ReportTimeBucket>): List<ReportCashFlowBucket> =
+        database.withTransaction {
+            buckets.map { bucket ->
+                val totals = transactionDao.getPeriodTotals(bucket.startInclusive, bucket.endExclusive)
+                ReportCashFlowBucket(
+                    label = bucket.label,
+                    income = totals.income,
+                    expense = totals.expenses,
+                )
+            }
         }
 
     override fun observeExpenseSumForCategoryPeriod(

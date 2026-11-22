@@ -51,3 +51,9 @@
   - `TransactionsScreen` & `TransactionsViewModel`: 3-column keyset incremental scroll (`BATCH_SIZE = 20`) with SQL-level filters and inline retry.
 - Implemented `BudgetPeriodResolver` (`MONTHLY`, `WEEKLY`, `CUSTOM`), 6-case cross-period overlap prevention per category, `BudgetUseCases` (CRUD/Archive/Restore + `ObserveBudgetsUseCase` + `EvaluateBudgetAlertsUseCase` with per-period deduplication), and Budget UI (`BudgetsScreen`, `BudgetFormScreen`, `BudgetDetailScreen`).
 - Added unit tests (`FinancialEngineBudgetTest`, `BudgetUseCasesTest`, `BudgetsViewModelTest`, updated `TransactionsViewModelTest` for keyset paging) and `Migration1To2AndQueryPlanTest` (`androidTest`).
+
+## Phase 7 — Reports (2026-11-22)
+- Added `ReportModels` (`ReportPeriodPreset`, `ReportPeriodRange`, `ReportsSnapshot`, `WalletActivityItem`, `SpendingTrendSummary`, `GoalPeriodSummary`, `BudgetPerformanceSummary`) and `ReportPeriodResolver` (exact calendar/custom boundaries, previous equivalent periods, ≤24 capped time buckets, `BigInteger` overflow-safe percentages with `null` zero-baseline).
+- Added zero-migration SQL aggregation queries in `TransactionDao` (`observeCategoryTotalsForPeriod`, `observeWalletActivityForPeriod` separating `Transfer In`/`Transfer Out` from `Income`/`Expense`, `getPeriodTotals` inside `@Transaction`) and `GoalAllocationDao` (`observePeriodGoalContributions` joining `transactions.transactionDate`).
+- Implemented `ObserveReportsUseCase`, `ReportsViewModel`, `ReportCategoryDetailViewModel` (keyset `LIMIT 20` drill-down), `ReportCharts` (native Compose `Canvas` grouped bar, trend line, and proportion bar), `ReportsScreen`, `ReportCategoryDetailScreen`, `SakuNavHost` routes, and EN/ID localization.
+- Added unit tests (`ReportPeriodResolverTest`, `ReportUseCasesTest`, `ReportsViewModelTest`) and `ReportQueryPlanTest` (`androidTest`).

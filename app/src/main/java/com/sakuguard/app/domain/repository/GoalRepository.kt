@@ -6,9 +6,15 @@ import com.sakuguard.app.domain.model.GoalStatus
 import com.sakuguard.app.domain.model.ProtectionMode
 import kotlinx.coroutines.flow.Flow
 
+data class GoalPeriodContributionTotals(
+    val allocated: Long = 0L,
+    val withdrawn: Long = 0L,
+)
+
 interface GoalRepository {
     fun observeGoals(includeArchived: Boolean = true): Flow<List<Goal>>
     fun observeAllocations(): Flow<List<GoalAllocationEntry>>
+    fun observePeriodGoalContributions(startInclusive: Long, endExclusive: Long): Flow<GoalPeriodContributionTotals>
     suspend fun getAllGoals(): List<Goal>
     suspend fun getGoalById(id: String): Goal?
     suspend fun getAllAllocations(): List<GoalAllocationEntry>

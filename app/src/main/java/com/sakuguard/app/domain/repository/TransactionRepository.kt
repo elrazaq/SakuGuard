@@ -1,9 +1,16 @@
 package com.sakuguard.app.domain.repository
 
 import com.sakuguard.app.domain.model.GoalAllocationEntry
+import com.sakuguard.app.domain.model.ReportCashFlowBucket
+import com.sakuguard.app.domain.model.ReportTimeBucket
 import com.sakuguard.app.domain.model.Transaction
 import com.sakuguard.app.domain.model.TransactionType
 import kotlinx.coroutines.flow.Flow
+
+data class CategoryTotal(
+    val categoryId: String?,
+    val totalAmount: Long,
+)
 
 data class WalletLedgerTotals(
     val walletId: String,
@@ -36,6 +43,16 @@ interface TransactionRepository {
     fun observeRecentTransactions(limit: Int = 5): Flow<List<Transaction>>
     fun observeAllWalletLedgerTotals(): Flow<Map<String, WalletLedgerTotals>>
     fun observeMonthlyActivity(startInclusive: Long, endExclusive: Long): Flow<MonthlyActivityTotals>
+    fun observeCategoryTotalsForPeriod(
+        type: TransactionType,
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Flow<List<CategoryTotal>>
+    fun observeWalletActivityForPeriod(
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Flow<Map<String, WalletLedgerTotals>>
+    suspend fun getTimeSeriesBuckets(buckets: List<ReportTimeBucket>): List<ReportCashFlowBucket>
     fun observeExpenseSumForCategoryPeriod(
         categoryId: String,
         startInclusive: Long,

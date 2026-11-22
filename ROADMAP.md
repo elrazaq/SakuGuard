@@ -7,6 +7,6 @@
 - [x] **Phase 4 — Savings Goals & Protection**: Multi-wallet goal allocations, withdrawals, Standard / Protected / Strict Protection modes, lifecycle & history.
 - [x] **Phase 5 — Dashboard**: Total assets, free money, allocated/protected funds, monthly summary, privacy toggle.
 - [x] **Phase 6 — Budgeting**: Monthly, weekly, custom, one-time budgets, planned spending, 80%/100% threshold warnings, SQL scalability & keyset scroll.
-- [ ] **Phase 7 — Reports**: Offline income/expense, category breakdown, cash flow, trends, filters.
+- [x] **Phase 7 — Reports**: Offline income/expense, category breakdown, cash flow, trends, wallet activity, budget/goal insights, drill-down, filters.
 - [ ] **Phase 8 — Backup & Restore**: `.saku` export/import (JSON + ZIP + AES-GCM + PBKDF2), merge & replace modes, schema versioning.
 - [ ] **Phase 9 — Polish & Production**: Accessibility, dark mode QA, migration tests, app icon, splash screen, release build.

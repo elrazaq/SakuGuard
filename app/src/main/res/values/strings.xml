@@ -284,4 +284,57 @@
     <string name="budget_error_overlap">An active budget already exists for this category and period.</string>
     <string name="budget_error_date_range">End date cannot be earlier than start date.</string>
     <string name="budget_error_generic">Unable to complete budget action.</string>
+
+    <!-- Phase 7: Reports -->
+    <string name="reports_title">Reports</string>
+    <string name="reports_period_this_month">This Month</string>
+    <string name="reports_period_last_month">Last Month</string>
+    <string name="reports_period_3_months">3 Months</string>
+    <string name="reports_period_6_months">6 Months</string>
+    <string name="reports_period_12_months">12 Months</string>
+    <string name="reports_period_custom">Custom</string>
+    <string name="reports_custom_start">Pick Start Date</string>
+    <string name="reports_custom_end">Pick End Date</string>
+
+    <string name="reports_empty_period_title">No activity in this period</string>
+    <string name="reports_empty_period_body">Try another date range or record income and expenses to see insights.</string>
+
+    <string name="reports_overview_title">Financial Overview</string>
+    <string name="reports_total_income">Total Income</string>
+    <string name="reports_total_expense">Total Expense</string>
+    <string name="reports_net_cash_flow">Net Cash Flow</string>
+
+    <string name="reports_income_vs_expense_title">Income vs Expense</string>
+    <string name="reports_spending_trend_title">Spending Trend</string>
+    <string name="reports_trend_no_baseline">No prior baseline</string>
+    <string name="reports_trend_vs_previous">vs previous period</string>
+    <string name="reports_trend_vs_last_month">vs last month</string>
+    <string name="reports_trend_insufficient">Need at least 2 time buckets to plot a trend.</string>
+
+    <string name="reports_expense_breakdown_title">Expense Breakdown</string>
+    <string name="reports_income_breakdown_title">Income Breakdown</string>
+    <string name="reports_breakdown_empty">No categorized transactions in this period.</string>
+    <string name="reports_uncategorized">Uncategorized</string>
+    <string name="reports_archived_tag">Archived</string>
+
+    <string name="reports_wallet_activity_title">Wallet Activity</string>
+    <string name="reports_wallet_transfer_in">Transfer In</string>
+    <string name="reports_wallet_transfer_out">Transfer Out</string>
+    <string name="reports_wallet_activity_empty">No wallet activity in this period.</string>
+
+    <string name="reports_budget_perf_title">Budget Performance</string>
+    <string name="reports_budget_perf_current_cycle">Active Budgets (Current Cycle)</string>
+    <string name="reports_budget_historical_note">Evaluated against current budget limits.</string>
+    <string name="reports_budget_empty">No active budgets configured.</string>
+    <string name="reports_manage_budgets">Manage</string>
+
+    <string name="reports_goals_title">Savings Goals</string>
+    <string name="reports_goals_allocated">Total Allocated</string>
+    <string name="reports_goals_protected">Protected Funds</string>
+    <string name="reports_goals_completed">Completed: %1$d</string>
+    <string name="reports_goals_period_in">Period Allocated: %1$s</string>
+    <string name="reports_goals_period_out">Period Withdrawn: %1$s</string>
+    <string name="reports_view_goals">View Goals</string>
+
+    <string name="reports_category_detail_empty">No matching transactions in this period.</string>
 </resources>

@@ -17,6 +17,9 @@ import com.sakuguard.app.feature.goals.GoalDetailScreen
 import com.sakuguard.app.feature.goals.GoalFormScreen
 import com.sakuguard.app.feature.goals.GoalWithdrawScreen
 import com.sakuguard.app.feature.goals.GoalsScreen
+import com.sakuguard.app.domain.model.TransactionType
+import com.sakuguard.app.feature.reports.ReportCategoryDetailScreen
+import com.sakuguard.app.feature.reports.ReportCategoryDetailViewModel
 import com.sakuguard.app.feature.reports.ReportsScreen
 import com.sakuguard.app.feature.transactions.TransactionDetailScreen
 import com.sakuguard.app.feature.transactions.TransactionFormScreen
@@ -37,6 +40,8 @@ object SakuRoutes {
     const val BUDGETS = "budgets"
     const val BUDGET_DETAIL = "budget_detail/{budgetId}"
     const val BUDGET_FORM = "budget_form?budgetId={budgetId}"
+    const val REPORT_CATEGORY_DETAIL =
+        "report_category_detail/{type}/{categoryId}/{startDate}/{endDateExclusive}"
 
     fun walletDetail(walletId: String): String = "wallet_detail/$walletId"
     fun walletCreate(): String = "wallet_form"
@@ -56,6 +61,16 @@ object SakuRoutes {
     fun budgetDetail(budgetId: String): String = "budget_detail/$budgetId"
     fun budgetCreate(): String = "budget_form"
     fun budgetEdit(budgetId: String): String = "budget_form?budgetId=$budgetId"
+
+    fun reportCategoryDetail(
+        type: TransactionType,
+        categoryId: String?,
+        startDate: Long,
+        endDateExclusive: Long,
+    ): String {
+        val catKey = categoryId ?: ReportCategoryDetailViewModel.UNCATEGORIZED_KEY
+        return "report_category_detail/${type.name}/$catKey/$startDate/$endDateExclusive"
+    }
 }
 
 @Composable
@@ -192,7 +207,29 @@ fun SakuNavHost(
                 onSaved = { navController.popBackStack() },
             )
         }
-        composable(SakuDestination.Reports.route) { ReportsScreen() }
+        composable(SakuDestination.Reports.route) {
+            ReportsScreen(
+                onOpenCategoryDetail = { type, categoryId, start, end ->
+                    navController.navigate(SakuRoutes.reportCategoryDetail(type, categoryId, start, end))
+                },
+                onOpenBudgets = { navController.navigate(SakuRoutes.budgets()) },
+                onOpenGoals = { navigateToTab(navController, SakuDestination.Goals.route) },
+            )
+        }
+        composable(
+            route = SakuRoutes.REPORT_CATEGORY_DETAIL,
+            arguments = listOf(
+                navArgument("type") { type = NavType.StringType },
+                navArgument("categoryId") { type = NavType.StringType },
+                navArgument("startDate") { type = NavType.LongType },
+                navArgument("endDateExclusive") { type = NavType.LongType },
+            ),
+        ) {
+            ReportCategoryDetailScreen(
+                onBack = { navController.popBackStack() },
+                onTransactionClick = { txId -> navController.navigate(SakuRoutes.transactionDetail(txId)) },
+            )
+        }
         composable(SakuRoutes.BUDGETS) {
             BudgetsScreen(
                 onBack = { navController.popBackStack() },

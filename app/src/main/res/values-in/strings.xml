@@ -284,4 +284,57 @@
     <string name="budget_error_overlap">Sudah ada anggaran aktif untuk kategori dan periode ini.</string>
     <string name="budget_error_date_range">Tanggal selesai tidak boleh sebelum tanggal mulai.</string>
     <string name="budget_error_generic">Gagal memproses aksi anggaran.</string>
+
+    <!-- Phase 7: Reports -->
+    <string name="reports_title">Laporan</string>
+    <string name="reports_period_this_month">Bulan Ini</string>
+    <string name="reports_period_last_month">Bulan Lalu</string>
+    <string name="reports_period_3_months">3 Bulan</string>
+    <string name="reports_period_6_months">6 Bulan</string>
+    <string name="reports_period_12_months">12 Bulan</string>
+    <string name="reports_period_custom">Kustom</string>
+    <string name="reports_custom_start">Pilih Tanggal Mulai</string>
+    <string name="reports_custom_end">Pilih Tanggal Selesai</string>
+
+    <string name="reports_empty_period_title">Belum ada aktivitas pada periode ini</string>
+    <string name="reports_empty_period_body">Coba pilih rentang tanggal lain atau catat pemasukan dan pengeluaran.</string>
+
+    <string name="reports_overview_title">Ringkasan Keuangan</string>
+    <string name="reports_total_income">Total Pemasukan</string>
+    <string name="reports_total_expense">Total Pengeluaran</string>
+    <string name="reports_net_cash_flow">Arus Kas Bersih</string>
+
+    <string name="reports_income_vs_expense_title">Pemasukan vs Pengeluaran</string>
+    <string name="reports_spending_trend_title">Tren Pengeluaran</string>
+    <string name="reports_trend_no_baseline">Belum ada pembanding</string>
+    <string name="reports_trend_vs_previous">dibanding periode sebelumnya</string>
+    <string name="reports_trend_vs_last_month">dibanding bulan lalu</string>
+    <string name="reports_trend_insufficient">Butuh minimal 2 rentang waktu untuk menampilkan grafik tren.</string>
+
+    <string name="reports_expense_breakdown_title">Rincian Pengeluaran</string>
+    <string name="reports_income_breakdown_title">Rincian Pemasukan</string>
+    <string name="reports_breakdown_empty">Belum ada transaksi berkategori pada periode ini.</string>
+    <string name="reports_uncategorized">Tanpa Kategori</string>
+    <string name="reports_archived_tag">Diarsipkan</string>
+
+    <string name="reports_wallet_activity_title">Aktivitas Dompet</string>
+    <string name="reports_wallet_transfer_in">Transfer Masuk</string>
+    <string name="reports_wallet_transfer_out">Transfer Keluar</string>
+    <string name="reports_wallet_activity_empty">Belum ada aktivitas dompet pada periode ini.</string>
+
+    <string name="reports_budget_perf_title">Performa Anggaran</string>
+    <string name="reports_budget_perf_current_cycle">Anggaran Aktif (Siklus Berjalan)</string>
+    <string name="reports_budget_historical_note">Dievaluasi menggunakan batas anggaran saat ini.</string>
+    <string name="reports_budget_empty">Belum ada anggaran aktif.</string>
+    <string name="reports_manage_budgets">Kelola</string>
+
+    <string name="reports_goals_title">Target Tabungan</string>
+    <string name="reports_goals_allocated">Total Dialokasikan</string>
+    <string name="reports_goals_protected">Dana Terlindungi</string>
+    <string name="reports_goals_completed">Tercapai: %1$d</string>
+    <string name="reports_goals_period_in">Alokasi Periode: %1$s</string>
+    <string name="reports_goals_period_out">Penarikan Periode: %1$s</string>
+    <string name="reports_view_goals">Lihat Target</string>
+
+    <string name="reports_category_detail_empty">Belum ada transaksi yang cocok pada periode ini.</string>
 </resources>

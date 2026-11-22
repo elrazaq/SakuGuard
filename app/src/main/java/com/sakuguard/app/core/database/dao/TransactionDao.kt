@@ -27,6 +27,11 @@ data class CategoryExpenseTotalTuple(
     val totalAmount: Long,
 )
 
+data class CategoryTotalTuple(
+    val categoryId: String?,
+    val totalAmount: Long,
+)
+
 @Dao
 interface TransactionDao {
     @Query("SELECT * FROM transactions ORDER BY transactionDate DESC, createdAt DESC, id DESC")
@@ -77,6 +82,49 @@ interface TransactionDao {
 
     @Query(
         """
+        SELECT
+            COALESCE(SUM(CASE WHEN type = 'INCOME' THEN amount ELSE 0 END), 0) AS income,
+            COALESCE(SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END), 0) AS expenses
+        FROM transactions
+        WHERE transactionDate >= :startInclusive AND transactionDate < :endExclusive
+        """,
+    )
+    suspend fun getPeriodTotals(startInclusive: Long, endExclusive: Long): MonthlyActivityTuple
+
+    @Query(
+        """
+        SELECT categoryId AS categoryId, COALESCE(SUM(amount), 0) AS totalAmount
+        FROM transactions
+        WHERE type = :type
+          AND transactionDate >= :startInclusive
+          AND transactionDate < :endExclusive
+        GROUP BY categoryId
+        ORDER BY totalAmount DESC
+        """,
+    )
+    fun observeCategoryTotalsForPeriod(
+        type: TransactionType,
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Flow<List<CategoryTotalTuple>>
+
+    @Query(
+        """
+        SELECT w.id AS walletId,
+            COALESCE((SELECT SUM(amount) FROM transactions WHERE walletId = w.id AND type = 'INCOME' AND transactionDate >= :startInclusive AND transactionDate < :endExclusive), 0) AS incomeSum,
+            COALESCE((SELECT SUM(amount) FROM transactions WHERE walletId = w.id AND type = 'EXPENSE' AND transactionDate >= :startInclusive AND transactionDate < :endExclusive), 0) AS expenseSum,
+            COALESCE((SELECT SUM(amount) FROM transactions WHERE walletId = w.id AND type = 'TRANSFER' AND transactionDate >= :startInclusive AND transactionDate < :endExclusive), 0) AS outgoingTransferSum,
+            COALESCE((SELECT SUM(amount) FROM transactions WHERE destinationWalletId = w.id AND type = 'TRANSFER' AND transactionDate >= :startInclusive AND transactionDate < :endExclusive), 0) AS incomingTransferSum
+        FROM wallets w
+        """,
+    )
+    fun observeWalletActivityForPeriod(
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Flow<List<WalletLedgerTotalsTuple>>
+
+    @Query(
+        """
         SELECT COALESCE(SUM(amount), 0)
         FROM transactions
         WHERE type = 'EXPENSE'
@@ -90,6 +138,49 @@ interface TransactionDao {
         startInclusive: Long,
         endExclusive: Long,
     ): Flow<Long>
+
+    @Query(
+        """
+        SELECT
+            COALESCE(SUM(CASE WHEN type = 'INCOME' THEN amount ELSE 0 END), 0) AS income,
+            COALESCE(SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END), 0) AS expenses
+        FROM transactions
+        WHERE transactionDate >= :startInclusive AND transactionDate < :endExclusive
+        """,
+    )
+    suspend fun getPeriodTotals(startInclusive: Long, endExclusive: Long): MonthlyActivityTuple
+
+    @Query(
+        """
+        SELECT categoryId AS categoryId, COALESCE(SUM(amount), 0) AS totalAmount
+        FROM transactions
+        WHERE type = :type
+          AND transactionDate >= :startInclusive
+          AND transactionDate < :endExclusive
+        GROUP BY categoryId
+        ORDER BY totalAmount DESC
+        """,
+    )
+    fun observeCategoryTotalsForPeriod(
+        type: TransactionType,
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Flow<List<CategoryTotalTuple>>
+
+    @Query(
+        """
+        SELECT w.id AS walletId,
+            COALESCE((SELECT SUM(amount) FROM transactions WHERE walletId = w.id AND type = 'INCOME' AND transactionDate >= :startInclusive AND transactionDate < :endExclusive), 0) AS incomeSum,
+            COALESCE((SELECT SUM(amount) FROM transactions WHERE walletId = w.id AND type = 'EXPENSE' AND transactionDate >= :startInclusive AND transactionDate < :endExclusive), 0) AS expenseSum,
+            COALESCE((SELECT SUM(amount) FROM transactions WHERE walletId = w.id AND type = 'TRANSFER' AND transactionDate >= :startInclusive AND transactionDate < :endExclusive), 0) AS outgoingTransferSum,
+            COALESCE((SELECT SUM(amount) FROM transactions WHERE destinationWalletId = w.id AND type = 'TRANSFER' AND transactionDate >= :startInclusive AND transactionDate < :endExclusive), 0) AS incomingTransferSum
+        FROM wallets w
+        """,
+    )
+    fun observeWalletActivityForPeriod(
+        startInclusive: Long,
+        endExclusive: Long,
+    ): Flow<List<WalletLedgerTotalsTuple>>
 
     @Query(
         """
