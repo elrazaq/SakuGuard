@@ -186,7 +186,7 @@ class ArchiveBudgetUseCase @Inject constructor(
                     }
                 }
             }
-            budgetRepository.setArchived(budgetId, archived, updatedAt)
+            budgetRepository.setBudgetArchived(budgetId, archived, updatedAt)
         }
     }
 }

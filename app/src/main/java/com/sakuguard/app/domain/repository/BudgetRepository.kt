@@ -10,6 +10,6 @@ interface BudgetRepository {
     suspend fun createBudget(budget: Budget)
     suspend fun updateBudget(budget: Budget)
     suspend fun deleteBudgetById(budgetId: String)
-    suspend fun setArchived(budgetId: String, archived: Boolean, updatedAt: Long)
+    suspend fun setBudgetArchived(budgetId: String, archived: Boolean, updatedAt: Long)
     suspend fun updateAlertState(budgetId: String, periodKey: String, level: Int, updatedAt: Long)
 }

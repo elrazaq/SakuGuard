@@ -6,6 +6,8 @@ import com.sakuguard.app.domain.model.BudgetHealthStatus
 import com.sakuguard.app.domain.model.BudgetPeriodType
 import com.sakuguard.app.domain.model.Category
 import com.sakuguard.app.domain.model.CategoryType
+import com.sakuguard.app.domain.model.GoalAllocationEntry
+import com.sakuguard.app.domain.model.GoalLedgerType
 import com.sakuguard.app.domain.model.Wallet
 import com.sakuguard.app.domain.model.WalletType
 import com.sakuguard.app.domain.repository.WalletLedgerTotals
@@ -89,7 +91,7 @@ class FinancialEngineBudgetTest {
             id = "w1",
             name = "BCA",
             type = WalletType.BANK_ACCOUNT,
-            initialBalance = 1_000_000L,
+            openingBalance = 1_000_000L,
             trackingStartDate = 0L,
             createdAt = 0L,
             updatedAt = 0L,
@@ -98,14 +100,24 @@ class FinancialEngineBudgetTest {
             walletId = "w1",
             incomeSum = 500_000L,
             expenseSum = 200_000L,
-            incomingTransferSum = 100_000L,
             outgoingTransferSum = 50_000L,
-            allocatedSum = 300_000L,
+            incomingTransferSum = 100_000L,
+        )
+        val allocations = listOf(
+            GoalAllocationEntry(
+                id = "a1",
+                goalId = "g1",
+                walletId = "w1",
+                transactionId = "tx1",
+                entryType = GoalLedgerType.ALLOCATION,
+                amount = 300_000L,
+                createdAt = 0L,
+            ),
         )
 
-        val summary = FinancialEngine.summarizeWalletFromTotals(wallet, totals)
+        val summary = FinancialEngine.summarizeWalletFromTotals(wallet, totals, allocations)
         assertThat(summary.currentBalance).isEqualTo(1_350_000L)
-        assertThat(summary.allocatedBalance).isEqualTo(300_000L)
-        assertThat(summary.freeBalance).isEqualTo(1_050_000L)
+        assertThat(summary.allocatedFunds).isEqualTo(300_000L)
+        assertThat(summary.freeMoney).isEqualTo(1_050_000L)
     }
 }

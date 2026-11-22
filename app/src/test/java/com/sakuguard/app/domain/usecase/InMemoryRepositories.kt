@@ -206,7 +206,7 @@ class InMemoryLedgerStore :
     override suspend fun deleteBudgetById(budgetId: String) {
         budgets.value = budgets.value.filterNot { it.id == budgetId }
     }
-    override suspend fun setArchived(budgetId: String, archived: Boolean, updatedAt: Long) {
+    override suspend fun setBudgetArchived(budgetId: String, archived: Boolean, updatedAt: Long) {
         budgets.value = budgets.value.map { if (it.id == budgetId) it.copy(isArchived = archived, updatedAt = updatedAt) else it }
     }
     override suspend fun updateAlertState(budgetId: String, periodKey: String, level: Int, updatedAt: Long) {

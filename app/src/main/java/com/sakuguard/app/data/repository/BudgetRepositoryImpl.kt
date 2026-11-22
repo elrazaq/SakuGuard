@@ -33,7 +33,7 @@ class BudgetRepositoryImpl @Inject constructor(
         budgetDao.deleteById(budgetId)
     }
 
-    override suspend fun setArchived(budgetId: String, archived: Boolean, updatedAt: Long) {
+    override suspend fun setBudgetArchived(budgetId: String, archived: Boolean, updatedAt: Long) {
         budgetDao.setArchived(budgetId, archived, updatedAt)
     }
 

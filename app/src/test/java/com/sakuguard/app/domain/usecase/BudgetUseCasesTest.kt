@@ -6,13 +6,13 @@ import com.sakuguard.app.domain.model.BudgetPeriodType
 import com.sakuguard.app.domain.model.Category
 import com.sakuguard.app.domain.model.CategoryType
 import com.sakuguard.app.domain.model.DomainException
-import com.sakuguard.app.domain.model.GoalWithdrawalMode
+import com.sakuguard.app.domain.model.Goal
 import com.sakuguard.app.domain.model.ProtectionMode
-import com.sakuguard.app.domain.model.SavingsGoal
 import com.sakuguard.app.domain.model.Transaction
 import com.sakuguard.app.domain.model.TransactionType
 import com.sakuguard.app.domain.model.Wallet
 import com.sakuguard.app.domain.model.WalletType
+import com.sakuguard.app.domain.model.WithdrawalTarget
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertThrows
@@ -164,7 +164,7 @@ class BudgetUseCasesTest {
 
         val recordTx = RecordTransactionUseCase(store, store, store, store)
         val createGoal = CreateGoalUseCase(store)
-        val allocateGoal = AllocateToGoalUseCase(store, store, store, store)
+        val allocateGoal = AllocateToGoalUseCase(store, store, store)
         val withdrawGoal = WithdrawFromGoalUseCase(store, store, store, store)
 
         val march15 = millis(2026, 3, 15)
@@ -175,30 +175,28 @@ class BudgetUseCasesTest {
         // April expense + DIRECT_EXPENSE goal withdrawal in Food category
         recordTx(Transaction("t2", TransactionType.EXPENSE, 100_000L, wallet.id, categoryId = food.id, transactionDate = april5, createdAt = april5, updatedAt = april5))
 
-        createGoal(SavingsGoal("g1", "Trip", 1_000_000L, ProtectionMode.STANDARD, createdAt = 0L, updatedAt = 0L))
+        createGoal(Goal("g1", "Trip", 1_000_000L, protectionMode = ProtectionMode.STANDARD, createdAt = 0L, updatedAt = 0L))
         allocateGoal("g1", wallet.id, 300_000L, march15, "save")
         withdrawGoal(
             goalId = "g1",
             walletId = wallet.id,
             amount = 150_000L,
-            mode = GoalWithdrawalMode.DIRECT_EXPENSE,
-            categoryId = food.id,
-            now = april5,
-            note = "meal",
+            target = WithdrawalTarget.DIRECT_EXPENSE,
+            date = april5,
             reason = null,
-            explicitUnlockConfirmed = false,
+            expenseCategoryId = food.id,
+            notes = "meal",
         )
         // TO_WALLET withdrawal must NOT be counted as budget expense
         withdrawGoal(
             goalId = "g1",
             walletId = wallet.id,
             amount = 50_000L,
-            mode = GoalWithdrawalMode.TO_WALLET,
-            categoryId = null,
-            now = april5,
-            note = "back",
+            target = WithdrawalTarget.TO_WALLET,
+            date = april5,
             reason = null,
-            explicitUnlockConfirmed = false,
+            expenseCategoryId = null,
+            notes = "back",
         )
 
         val marchOverview = observeBudgets(zone, LocalDate.of(2026, 3, 20)).first()
