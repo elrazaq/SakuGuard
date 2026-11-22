@@ -1,0 +1,19 @@
+name: Feature Request
+description: Suggest an offline-first enhancement for SakuGuard
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or Use Case
+      description: What problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How should it work while staying 100% offline?
+    validations:
+      required: true

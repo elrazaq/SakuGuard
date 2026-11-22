@@ -1,5 +1,10 @@
 # SakuGuard
 
+[![Release](https://img.shields.io/github/v/release/elrazaq/SakuGuard)](https://github.com/elrazaq/SakuGuard/releases)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![Android](https://img.shields.io/badge/Platform-Android%208.0%2B-3DDC84.svg)](app/build.gradle.kts)
+[![Offline First](https://img.shields.io/badge/Offline--First-Zero%20Internet%20Permission-166534.svg)](app/src/main/AndroidManifest.xml)
+
 > **Track your money. Protect your goals.**
 
 SakuGuard is a fully offline, privacy-first personal finance, budgeting, reporting, and savings goal manager for Android.
