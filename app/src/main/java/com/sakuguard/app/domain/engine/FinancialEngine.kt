@@ -1,0 +1,180 @@
+package com.sakuguard.app.domain.engine
+
+import com.sakuguard.app.domain.model.FinancialOverview
+import com.sakuguard.app.domain.model.Goal
+import com.sakuguard.app.domain.model.GoalAllocationEntry
+import com.sakuguard.app.domain.model.GoalLedgerType
+import com.sakuguard.app.domain.model.GoalSummary
+import com.sakuguard.app.domain.model.ProtectionMode
+import com.sakuguard.app.domain.model.Transaction
+import com.sakuguard.app.domain.model.TransactionType
+import com.sakuguard.app.domain.model.Wallet
+import com.sakuguard.app.domain.model.WalletSummary
+
+/**
+ * Pure Kotlin, deterministic financial calculation engine using overflow-safe [Long] arithmetic.
+ */
+object FinancialEngine {
+
+    fun calculateWalletBalance(
+        wallet: Wallet,
+        transactions: List<Transaction>,
+    ): Long {
+        var balance = wallet.openingBalance
+        for (tx in transactions) {
+            when (tx.type) {
+                TransactionType.INCOME -> {
+                    if (tx.walletId == wallet.id) {
+                        balance = SafeMath.add(balance, tx.amount)
+                    }
+                }
+                TransactionType.EXPENSE -> {
+                    if (tx.walletId == wallet.id) {
+                        balance = SafeMath.subtract(balance, tx.amount)
+                    }
+                }
+                TransactionType.TRANSFER -> {
+                    if (tx.walletId == wallet.id) {
+                        balance = SafeMath.subtract(balance, tx.amount)
+                    }
+                    if (tx.destinationWalletId == wallet.id) {
+                        balance = SafeMath.add(balance, tx.amount)
+                    }
+                }
+                // Goal allocations & withdrawals never alter wallet balance directly;
+                // DIRECT_EXPENSE creates a separate EXPENSE transaction handled above.
+                TransactionType.GOAL_ALLOCATION,
+                TransactionType.GOAL_WITHDRAWAL -> Unit
+            }
+        }
+        return balance
+    }
+
+    fun calculateWalletAllocatedFunds(
+        walletId: String,
+        allocations: List<GoalAllocationEntry>,
+    ): Long {
+        var allocated = 0L
+        for (entry in allocations) {
+            if (entry.walletId == walletId) {
+                allocated = when (entry.entryType) {
+                    GoalLedgerType.ALLOCATION -> SafeMath.add(allocated, entry.amount)
+                    GoalLedgerType.WITHDRAWAL -> SafeMath.subtract(allocated, entry.amount)
+                }
+            }
+        }
+        return allocated
+    }
+
+    fun calculateWalletFreeMoney(
+        walletBalance: Long,
+        allocatedFunds: Long,
+    ): Long = SafeMath.subtract(walletBalance, allocatedFunds)
+
+    fun summarizeWallet(
+        wallet: Wallet,
+        transactions: List<Transaction>,
+        allocations: List<GoalAllocationEntry>,
+    ): WalletSummary {
+        val balance = calculateWalletBalance(wallet, transactions)
+        val allocated = calculateWalletAllocatedFunds(wallet.id, allocations)
+        val free = calculateWalletFreeMoney(balance, allocated)
+        return WalletSummary(
+            wallet = wallet,
+            currentBalance = balance,
+            allocatedFunds = allocated,
+            freeMoney = free,
+        )
+    }
+
+    fun calculateGoalAllocatedAmount(
+        goalId: String,
+        allocations: List<GoalAllocationEntry>,
+    ): Long {
+        var allocated = 0L
+        for (entry in allocations) {
+            if (entry.goalId == goalId) {
+                allocated = when (entry.entryType) {
+                    GoalLedgerType.ALLOCATION -> SafeMath.add(allocated, entry.amount)
+                    GoalLedgerType.WITHDRAWAL -> SafeMath.subtract(allocated, entry.amount)
+                }
+            }
+        }
+        return allocated
+    }
+
+    fun calculateGoalAllocatedInWallet(
+        goalId: String,
+        walletId: String,
+        allocations: List<GoalAllocationEntry>,
+    ): Long {
+        var allocated = 0L
+        for (entry in allocations) {
+            if (entry.goalId == goalId && entry.walletId == walletId) {
+                allocated = when (entry.entryType) {
+                    GoalLedgerType.ALLOCATION -> SafeMath.add(allocated, entry.amount)
+                    GoalLedgerType.WITHDRAWAL -> SafeMath.subtract(allocated, entry.amount)
+                }
+            }
+        }
+        return allocated
+    }
+
+    fun calculateGoalWalletBreakdown(
+        goalId: String,
+        allocations: List<GoalAllocationEntry>,
+    ): Map<String, Long> {
+        val breakdown = linkedMapOf<String, Long>()
+        for (entry in allocations) {
+            if (entry.goalId == goalId) {
+                val current = breakdown[entry.walletId] ?: 0L
+                val updated = when (entry.entryType) {
+                    GoalLedgerType.ALLOCATION -> SafeMath.add(current, entry.amount)
+                    GoalLedgerType.WITHDRAWAL -> SafeMath.subtract(current, entry.amount)
+                }
+                breakdown[entry.walletId] = updated
+            }
+        }
+        return breakdown.filterValues { it > 0L }
+    }
+
+    fun summarizeGoal(
+        goal: Goal,
+        allocations: List<GoalAllocationEntry>,
+    ): GoalSummary {
+        val allocated = calculateGoalAllocatedAmount(goal.id, allocations)
+        val remaining = SafeMath.subtract(goal.targetAmount, allocated).coerceAtLeast(0L)
+        return GoalSummary(
+            goal = goal,
+            allocatedAmount = allocated,
+            remainingAmount = remaining,
+            walletBreakdown = calculateGoalWalletBreakdown(goal.id, allocations),
+        )
+    }
+
+    fun calculateFinancialOverview(
+        wallets: List<Wallet>,
+        transactions: List<Transaction>,
+        goals: List<Goal>,
+        allocations: List<GoalAllocationEntry>,
+    ): FinancialOverview {
+        val totalAssets = SafeMath.sum(wallets.map { calculateWalletBalance(it, transactions) })
+        val allocatedByGoal = goals.associate { goal ->
+            goal.id to calculateGoalAllocatedAmount(goal.id, allocations)
+        }
+        val allocatedFunds = SafeMath.sum(allocatedByGoal.values)
+        val protectedFunds = SafeMath.sum(
+            goals.filter {
+                it.protectionMode == ProtectionMode.PROTECTED ||
+                    it.protectionMode == ProtectionMode.STRICT
+            }.map { allocatedByGoal[it.id] ?: 0L },
+        )
+        val freeMoney = SafeMath.subtract(totalAssets, allocatedFunds)
+        return FinancialOverview(
+            totalAssets = totalAssets,
+            allocatedFunds = allocatedFunds,
+            protectedFunds = protectedFunds,
+            freeMoney = freeMoney,
+        )
+    }
+}

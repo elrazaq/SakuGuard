@@ -1,7 +1,7 @@
 # SakuGuard Development Roadmap
 
 - [x] **Phase 0 — Project Foundation**: Gradle, Compose, Material 3, Hilt, Navigation skeleton, Design System, CI, Docs.
-- [ ] **Phase 1 — Core Database & Financial Engine**: Room entities, DAOs, deterministic `Long` balance & allocation engine, unit tests.
+- [x] **Phase 1 — Core Database & Financial Engine**: Room entities, DAOs, deterministic `Long` balance & allocation engine, unit tests.
 - [ ] **Phase 2 — Wallet Management**: Wallet CRUD, opening balances, archival, wallet detail & history.
 - [ ] **Phase 3 — Transaction Management**: Income, expense, transfer, categories, filters, search, edit/delete consistency.
 - [ ] **Phase 4 — Savings Goals & Protection**: Multi-wallet goal allocations, withdrawals, Standard / Protected / Strict Protection modes.
