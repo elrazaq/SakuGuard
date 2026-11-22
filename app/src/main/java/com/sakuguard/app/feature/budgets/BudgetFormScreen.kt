@@ -90,7 +90,7 @@ fun BudgetFormScreen(
             },
             dismissButton = {
                 TextButton(onClick = { pickingStartDate = false }) {
-                    Text(stringResource(R.string.action_cancel))
+                    Text(stringResource(R.string.common_cancel))
                 }
             },
         ) {
@@ -114,7 +114,7 @@ fun BudgetFormScreen(
             },
             dismissButton = {
                 TextButton(onClick = { pickingEndDate = false }) {
-                    Text(stringResource(R.string.action_cancel))
+                    Text(stringResource(R.string.common_cancel))
                 }
             },
         ) {

@@ -130,10 +130,8 @@ fun BudgetsScreen(
             uiState.activeBudgets.isEmpty() && uiState.archivedBudgets.isEmpty() -> {
                 EmptyDestinationScaffold(
                     icon = Icons.Outlined.PieChart,
-                    title = stringResource(R.string.budgets_empty_title),
-                    body = stringResource(R.string.budgets_empty_body),
-                    actionLabel = stringResource(R.string.budgets_add_button),
-                    onAction = onCreateBudget,
+                    titleRes = R.string.budgets_empty_title,
+                    bodyRes = R.string.budgets_empty_body,
                     modifier = Modifier.padding(innerPadding),
                 )
             }
@@ -220,7 +218,7 @@ fun BudgetsScreen(
                                         TextButton(
                                             onClick = { viewModel.restoreBudget(summary.budget.id) },
                                         ) {
-                                            Text(text = stringResource(R.string.action_restore))
+                                            Text(text = stringResource(R.string.goal_restore_action))
                                         }
                                     },
                                 )

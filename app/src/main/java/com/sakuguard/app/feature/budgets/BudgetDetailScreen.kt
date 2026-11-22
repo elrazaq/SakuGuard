@@ -95,14 +95,14 @@ fun BudgetDetailScreen(
                     },
                 ) {
                     Text(
-                        text = stringResource(R.string.action_delete),
+                        text = stringResource(R.string.common_delete),
                         color = MaterialTheme.colorScheme.error,
                     )
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirm = false }) {
-                    Text(stringResource(R.string.action_cancel))
+                    Text(stringResource(R.string.common_cancel))
                 }
             },
         )
@@ -132,7 +132,7 @@ fun BudgetDetailScreen(
                         IconButton(onClick = { onEdit(summary.budget.id) }) {
                             Icon(
                                 imageVector = Icons.Outlined.Edit,
-                                contentDescription = stringResource(R.string.action_edit),
+                                contentDescription = stringResource(R.string.wallets_edit_action),
                             )
                         }
                     }
@@ -308,7 +308,7 @@ fun BudgetDetailScreen(
                             Spacer(modifier = Modifier.padding(horizontal = 4.dp))
                             Text(
                                 text = stringResource(
-                                    if (summary.budget.isArchived) R.string.action_restore else R.string.action_archive,
+                                    if (summary.budget.isArchived) R.string.goal_restore_action else R.string.goal_archive_action,
                                 ),
                             )
                         }
@@ -322,7 +322,7 @@ fun BudgetDetailScreen(
                         ) {
                             Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
                             Spacer(modifier = Modifier.padding(horizontal = 4.dp))
-                            Text(text = stringResource(R.string.action_delete))
+                            Text(text = stringResource(R.string.common_delete))
                         }
                     }
                 }
