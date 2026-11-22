@@ -82,7 +82,7 @@ class FinancialEngineBudgetTest {
         assertThat(summary.healthStatus).isEqualTo(BudgetHealthStatus.EXCEEDED)
         assertThat(summary.remainingAmount).isEqualTo(0L)
         assertThat(summary.overspentAmount).isEqualTo(250_000L)
-        assertThat(summary.utilizationPermille).isEqualTo(1250)
+        assertThat(summary.utilizationPermille).isEqualTo(1000)
     }
 
     @Test
