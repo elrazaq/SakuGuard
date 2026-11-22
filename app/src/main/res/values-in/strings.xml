@@ -20,4 +20,52 @@
     <string name="empty_transactions_body">Pemasukan, pengeluaran, transfer, dan alokasi target akan ditampilkan di sini.</string>
     <string name="empty_reports_title">Belum ada laporan</string>
     <string name="empty_reports_body">Arus kas offline, rincian kategori, dan progres tabungan akan muncul di sini.</string>
+
+    <!-- Fase 2: Manajemen Dompet -->
+    <string name="wallets_title">Dompet</string>
+    <string name="wallets_total_assets">Total Aset</string>
+    <string name="wallets_active_count_format">%1$d dompet aktif</string>
+    <string name="wallets_free_money">Uang Bebas</string>
+    <string name="wallets_allocated_money">Dialokasikan</string>
+    <string name="wallets_current_balance">Saldo Saat Ini</string>
+    <string name="wallets_opening_balance">Saldo Awal</string>
+    <string name="wallets_active_section">Dompet Aktif</string>
+    <string name="wallets_archived_section">Dompet Diarsipkan (%1$d)</string>
+    <string name="wallets_add_button">Tambah Dompet</string>
+    <string name="wallets_create_title">Buat Dompet</string>
+    <string name="wallets_edit_title">Ubah Dompet</string>
+    <string name="wallets_detail_title">Detail Dompet</string>
+    <string name="wallets_status_active">Aktif</string>
+    <string name="wallets_status_archived">Diarsipkan</string>
+    <string name="wallets_description_label">Deskripsi (opsional)</string>
+    <string name="wallets_name_label">Nama Dompet</string>
+    <string name="wallets_name_hint">cth. BCA, Tunai, GoPay</string>
+    <string name="wallets_type_label">Jenis Dompet</string>
+    <string name="wallets_icon_label">Ikon</string>
+    <string name="wallets_color_label">Warna Aksen</string>
+    <string name="wallets_save_button">Simpan Dompet</string>
+    <string name="wallets_edit_action">Ubah</string>
+    <string name="wallets_archive_action">Arsipkan</string>
+    <string name="wallets_restore_action">Pulihkan</string>
+    <string name="wallets_archive_confirm_title">Arsipkan dompet ini?</string>
+    <string name="wallets_archive_confirm_body">Dompet yang diarsipkan tidak dapat dipakai untuk transaksi baru, tetapi seluruh riwayat tetap tersimpan.</string>
+    <string name="wallets_restore_confirm_title">Pulihkan dompet ini?</string>
+    <string name="wallets_restore_confirm_body">Dompet ini akan aktif kembali dengan saldo dan riwayat yang ada.</string>
+    <string name="wallets_goal_breakdown_title">Alokasi Target</string>
+    <string name="wallets_no_goal_allocations">Belum ada dana yang dialokasikan ke target tabungan dari dompet ini.</string>
+
+    <string name="wallet_type_bank">Rekening Bank</string>
+    <string name="wallet_type_cash">Uang Tunai</string>
+    <string name="wallet_type_ewallet">E-Wallet</string>
+    <string name="wallet_type_other">Lainnya</string>
+
+    <string name="wallet_error_name_blank">Nama dompet tidak boleh kosong.</string>
+    <string name="wallet_error_invalid_amount">Masukkan angka bulat yang valid (0 atau lebih).</string>
+    <string name="wallet_error_archive_allocated">Tidak dapat mengarsipkan dompet yang masih memiliki alokasi target.</string>
+    <string name="wallet_error_insufficient_free">Saldo awal tidak dapat dikurangi di bawah alokasi target yang ada.</string>
+    <string name="wallet_error_generic">Gagal memproses aksi dompet.</string>
+
+    <string name="common_cancel">Batal</string>
+    <string name="common_confirm">Konfirmasi</string>
+    <string name="common_back">Kembali</string>
 </resources>

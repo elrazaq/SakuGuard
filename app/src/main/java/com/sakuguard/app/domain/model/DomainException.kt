@@ -2,6 +2,7 @@ package com.sakuguard.app.domain.model
 
 sealed class DomainException(message: String) : IllegalStateException(message) {
     class InvalidAmountException(message: String = "Amount must be positive") : DomainException(message)
+    class InvalidInputException(message: String) : DomainException(message)
     class ArithmeticOverflowException(message: String = "Monetary calculation overflow") : DomainException(message)
     class EntityNotFoundException(message: String) : DomainException(message)
     class ArchivedEntityException(message: String) : DomainException(message)

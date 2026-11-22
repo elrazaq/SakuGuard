@@ -25,3 +25,6 @@
 
 ## TD-007: Figma Visual Reference Adoption (Phase 2+ UI)
 - **Decision**: Adopt layout hierarchy, `#F5F5FA`/`#FFFFFF` surface contrast, `#060D2D` ink, and semantic financial colors (`#039855`, `#D92D20`, `#FA9600`) from Figma `kFd3ya5EowknzzvzFr4fEn`, while retaining Deep Forest Green (`#166534`) as primary and excluding online e-wallet/payment features.
+
+## TD-008: Integer-Only Monetary Input (`CurrencyInputParser`)
+- **Decision**: Parse wallet opening balance inputs as digits-only `Long` via `CurrencyInputParser.parseNonNegativeIdr`, rejecting blanks, decimals, signs, and `Long` overflow rather than silently coercing invalid input.

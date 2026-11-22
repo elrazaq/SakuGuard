@@ -12,16 +12,30 @@ import androidx.compose.ui.graphics.Color
 
 @Immutable
 data class SakuExtendedColors(
+    val income: Color,
+    val incomeContainer: Color,
+    val expense: Color,
+    val expenseContainer: Color,
     val warning: Color,
     val warningContainer: Color,
     val textSecondary: Color,
+    val heroStart: Color,
+    val heroEnd: Color,
+    val onHero: Color,
 )
 
 val LocalSakuColors = staticCompositionLocalOf {
     SakuExtendedColors(
+        income = SakuIncomeLight,
+        incomeContainer = SakuIncomeContainerLight,
+        expense = SakuExpenseLight,
+        expenseContainer = SakuExpenseContainerLight,
         warning = SakuWarningLight,
         warningContainer = SakuWarningContainerLight,
         textSecondary = SakuTextSecondaryLight,
+        heroStart = SakuHeroStartLight,
+        heroEnd = SakuHeroEndLight,
+        onHero = SakuOnHeroLight,
     )
 }
 
@@ -77,15 +91,29 @@ fun SakuGuardTheme(
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     val extendedColors = if (darkTheme) {
         SakuExtendedColors(
+            income = SakuIncomeDark,
+            incomeContainer = SakuIncomeContainerDark,
+            expense = SakuExpenseDark,
+            expenseContainer = SakuExpenseContainerDark,
             warning = SakuWarningDark,
             warningContainer = SakuWarningContainerDark,
             textSecondary = SakuTextSecondaryDark,
+            heroStart = SakuHeroStartDark,
+            heroEnd = SakuHeroEndDark,
+            onHero = SakuOnHeroDark,
         )
     } else {
         SakuExtendedColors(
+            income = SakuIncomeLight,
+            incomeContainer = SakuIncomeContainerLight,
+            expense = SakuExpenseLight,
+            expenseContainer = SakuExpenseContainerLight,
             warning = SakuWarningLight,
             warningContainer = SakuWarningContainerLight,
             textSecondary = SakuTextSecondaryLight,
+            heroStart = SakuHeroStartLight,
+            heroEnd = SakuHeroEndLight,
+            onHero = SakuOnHeroLight,
         )
     }
 

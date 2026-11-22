@@ -20,4 +20,52 @@
     <string name="empty_transactions_body">Income, expenses, transfers, and goal allocations will be listed here.</string>
     <string name="empty_reports_title">No reports yet</string>
     <string name="empty_reports_body">Offline cash flow, category breakdowns, and savings progress will appear here.</string>
+
+    <!-- Phase 2: Wallet Management -->
+    <string name="wallets_title">Wallets</string>
+    <string name="wallets_total_assets">Total Assets</string>
+    <string name="wallets_active_count_format">%1$d active wallets</string>
+    <string name="wallets_free_money">Free Money</string>
+    <string name="wallets_allocated_money">Allocated</string>
+    <string name="wallets_current_balance">Current Balance</string>
+    <string name="wallets_opening_balance">Opening Balance</string>
+    <string name="wallets_active_section">Active Wallets</string>
+    <string name="wallets_archived_section">Archived Wallets (%1$d)</string>
+    <string name="wallets_add_button">Add Wallet</string>
+    <string name="wallets_create_title">Create Wallet</string>
+    <string name="wallets_edit_title">Edit Wallet</string>
+    <string name="wallets_detail_title">Wallet Details</string>
+    <string name="wallets_status_active">Active</string>
+    <string name="wallets_status_archived">Archived</string>
+    <string name="wallets_description_label">Description (optional)</string>
+    <string name="wallets_name_label">Wallet Name</string>
+    <string name="wallets_name_hint">e.g. BCA, Cash, GoPay</string>
+    <string name="wallets_type_label">Wallet Type</string>
+    <string name="wallets_icon_label">Icon</string>
+    <string name="wallets_color_label">Accent Color</string>
+    <string name="wallets_save_button">Save Wallet</string>
+    <string name="wallets_edit_action">Edit</string>
+    <string name="wallets_archive_action">Archive</string>
+    <string name="wallets_restore_action">Restore</string>
+    <string name="wallets_archive_confirm_title">Archive this wallet?</string>
+    <string name="wallets_archive_confirm_body">Archived wallets cannot be used for new transactions, but all historical records stay intact.</string>
+    <string name="wallets_restore_confirm_title">Restore this wallet?</string>
+    <string name="wallets_restore_confirm_body">This wallet will become active again with its existing balance and history.</string>
+    <string name="wallets_goal_breakdown_title">Goal Allocations</string>
+    <string name="wallets_no_goal_allocations">No funds allocated to savings goals from this wallet.</string>
+
+    <string name="wallet_type_bank">Bank Account</string>
+    <string name="wallet_type_cash">Cash</string>
+    <string name="wallet_type_ewallet">E-Wallet</string>
+    <string name="wallet_type_other">Other</string>
+
+    <string name="wallet_error_name_blank">Wallet name cannot be empty.</string>
+    <string name="wallet_error_invalid_amount">Enter a valid whole number (0 or greater).</string>
+    <string name="wallet_error_archive_allocated">Cannot archive a wallet that still holds goal allocations.</string>
+    <string name="wallet_error_insufficient_free">Opening balance cannot be reduced below existing goal allocations.</string>
+    <string name="wallet_error_generic">Unable to complete wallet action.</string>
+
+    <string name="common_cancel">Cancel</string>
+    <string name="common_confirm">Confirm</string>
+    <string name="common_back">Back</string>
 </resources>

@@ -15,3 +15,10 @@
 - Implemented `SafeMath` (`Math.addExact` / `Math.subtractExact`) and pure Kotlin `FinancialEngine` (`Long`-only, zero double-counting, `Protected Funds <= Allocated Money <= Total Assets`, `Total Assets == Free Money + Allocated Money`).
 - Implemented repository layer (`data/repository/`) with `withTransaction` atomicity and invariant-checking UseCases (`CreateWalletUseCase`, `UpdateWalletUseCase`, `ArchiveWalletUseCase`, `CreateGoalUseCase`, `UpdateGoalProtectionUseCase`, `ArchiveGoalUseCase`, `AllocateToGoalUseCase`, `WithdrawFromGoalUseCase`, `RecordTransactionUseCase`, `UpdateTransactionUseCase`, `DeleteTransactionUseCase`).
 - Added JVM unit test suites: `SafeMathTest`, `FinancialEngineTest`, and `TransactionInvariantsTest`.
+
+## Phase 2 — Wallet Management (2026-11-22)
+- Evolved `core/designsystem/` (`Color.kt`, `Theme.kt`, `Spacing.kt`, `SakuComponents.kt`) with Figma-adapted surface hierarchy (`#F5F5FA` canvas, `#060D2D` ink), semantic financial tokens, Deep Forest Green (`#166534`) `SakuHeroBalanceCard`, and `SakuKpiPairCard`.
+- Added `CurrencyInputParser` (`Long`-only integer input validation) and `DomainException.InvalidInputException`.
+- Added `ObserveWalletPortfolioUseCase` and `ObserveWalletDetailUseCase` powered by `FinancialEngine`, plus non-blank name validation in `CreateWalletUseCase` / `UpdateWalletUseCase`.
+- Implemented `WalletsScreen`, `WalletDetailScreen`, `WalletFormScreen` (Create/Edit), `WalletsViewModel`, `WalletDetailViewModel`, `WalletFormViewModel`, `WalletVisuals`, nested routes in `SakuNavHost`, and full EN + ID strings.
+- Added unit tests: `CurrencyInputParserTest`, `WalletUseCasesTest`, `WalletsViewModelTest`, `WalletFormViewModelTest`, `WalletDetailViewModelTest`.
