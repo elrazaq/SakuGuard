@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -15,14 +17,43 @@ android {
         applicationId = "com.sakuguard.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        versionCode = 1
+        versionName = "1.0.0"
+    }
+
+    val keystorePropsFile = rootProject.file("keystore.properties")
+    val keystoreProps = Properties().apply {
+        if (keystorePropsFile.isFile) {
+            keystorePropsFile.inputStream().use(::load)
+        }
+    }
+    val storePath = System.getenv("SAKUGUARD_KEYSTORE_PATH") ?: keystoreProps.getProperty("storeFile")
+    val storePass = System.getenv("SAKUGUARD_KEYSTORE_PASSWORD") ?: keystoreProps.getProperty("storePassword")
+    val keyAliasVal = System.getenv("SAKUGUARD_KEY_ALIAS") ?: keystoreProps.getProperty("keyAlias")
+    val keyPass = System.getenv("SAKUGUARD_KEY_PASSWORD") ?: keystoreProps.getProperty("keyPassword")
+    val hasReleaseSigning = !storePath.isNullOrBlank() &&
+        !storePass.isNullOrBlank() &&
+        !keyAliasVal.isNullOrBlank() &&
+        !keyPass.isNullOrBlank() &&
+        file(storePath).isFile
+
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = file(storePath!!)
+                storePassword = storePass
+                keyAlias = keyAliasVal
+                keyPassword = keyPass
+            }
+        }
     }
 
     buildTypes {
         release {
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(

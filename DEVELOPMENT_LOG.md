@@ -64,3 +64,9 @@
 - Implemented `BackupValidator` verifying all FK, transaction/category, transfer, `DIRECT_EXPENSE`, derived balance/Free Money/Protected Funds, tracking-date, `SafeMath`, and budget invariants prior to DB mutation.
 - Implemented `BackupRepositoryImpl` (single `withTransaction` export snapshot + self-verification + SAF write/cleanup; transactional reverse-FK `deleteAll` + forward-FK chunked `insertAll` restore), `BackupRestoreViewModel`, `BackupRestoreScreen`, `SakuNavHost` route, `DashboardScreen` entry button, and EN/ID strings.
 - Added unit tests (`BackupCryptoTest`, `BackupArchiveCodecTest`, `BackupValidatorTest`, `BackupRestoreViewModelTest`) and `BackupRestoreDatabaseTest` (`androidTest`).
+
+## Phase 9 — Polish & Production (2026-11-22)
+- Fixed `BudgetFormScreen` `DatePicker` UTC-to-local conversion (`DateFormatter.localMillisToUtcDatePickerMillis` / `utcDatePickerMillisToLocalStartOfDay`) and added `imePadding()` + `navigationBarsPadding()` across nested forms/screens.
+- Added TalkBack `contentDescription` strings (`common_back`, `common_dismiss`) on all remaining `IconButton`s and `Modifier.semantics` summaries on `ReportCharts` (`Canvas` charts) in EN and ID.
+- Added `res/values-night/themes.xml` and light/dark `android:windowBackground` in `themes.xml` to eliminate dark-mode cold-start white flash.
+- Enabled `WindowManager.LayoutParams.FLAG_SECURE` in `!BuildConfig.DEBUG` (`MainActivity`), bumped `versionName = "1.0.0"` (`versionCode = 1`), added optional `keystore.properties` / env-var release signing hook, added `assembleRelease` & `bundleRelease` (R8) to `.github/workflows/android.yml`, and created `RELEASE_CHECKLIST.md`.

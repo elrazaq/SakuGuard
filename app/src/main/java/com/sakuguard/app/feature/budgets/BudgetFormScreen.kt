@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -75,13 +77,17 @@ fun BudgetFormScreen(
     }
 
     if (pickingStartDate) {
-        val state = rememberDatePickerState(initialSelectedDateMillis = uiState.startDate)
+        val state = rememberDatePickerState(
+            initialSelectedDateMillis = DateFormatter.localMillisToUtcDatePickerMillis(uiState.startDate),
+        )
         DatePickerDialog(
             onDismissRequest = { pickingStartDate = false },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        state.selectedDateMillis?.let { viewModel.onStartDateSelect(DateFormatter.startOfDayMillis(it)) }
+                        state.selectedDateMillis?.let {
+                            viewModel.onStartDateSelect(DateFormatter.utcDatePickerMillisToLocalStartOfDay(it))
+                        }
                         pickingStartDate = false
                     },
                 ) {
@@ -99,13 +105,17 @@ fun BudgetFormScreen(
     }
 
     if (pickingEndDate) {
-        val state = rememberDatePickerState(initialSelectedDateMillis = uiState.endDateInclusive)
+        val state = rememberDatePickerState(
+            initialSelectedDateMillis = DateFormatter.localMillisToUtcDatePickerMillis(uiState.endDateInclusive),
+        )
         DatePickerDialog(
             onDismissRequest = { pickingEndDate = false },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        state.selectedDateMillis?.let { viewModel.onEndDateSelect(DateFormatter.startOfDayMillis(it)) }
+                        state.selectedDateMillis?.let {
+                            viewModel.onEndDateSelect(DateFormatter.utcDatePickerMillisToLocalStartOfDay(it))
+                        }
                         pickingEndDate = false
                     },
                 ) {
@@ -138,7 +148,7 @@ fun BudgetFormScreen(
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = null,
+                            contentDescription = stringResource(R.string.common_back),
                         )
                     }
                 },
@@ -162,6 +172,8 @@ fun BudgetFormScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
+                    .navigationBarsPadding()
+                    .imePadding()
                     .verticalScroll(rememberScrollState())
                     .padding(SakuSpacing.lg),
                 verticalArrangement = Arrangement.spacedBy(SakuSpacing.md),

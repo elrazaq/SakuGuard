@@ -366,4 +366,10 @@
     <string name="backup_error_size_limit">Backup file exceeds the allowed size limit.</string>
     <string name="backup_error_integrity">Backup failed financial integrity checks. Existing data was not changed.</string>
     <string name="backup_error_io">Could not read or write the selected file.</string>
+
+    <!-- Phase 9: Accessibility -->
+    <string name="common_dismiss">Dismiss</string>
+    <string name="reports_chart_income_vs_expense_cd">Income versus expense bar chart across %1$d periods</string>
+    <string name="reports_chart_spending_trend_cd">Spending trend line chart across %1$d periods</string>
+    <string name="reports_chart_breakdown_cd">Category proportion bar across %1$d categories</string>
 </resources>

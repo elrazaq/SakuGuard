@@ -9,4 +9,4 @@
 - [x] **Phase 6 — Budgeting**: Monthly, weekly, custom, one-time budgets, planned spending, 80%/100% threshold warnings, SQL scalability & keyset scroll.
 - [x] **Phase 7 — Reports**: Offline income/expense, category breakdown, cash flow, trends, wallet activity, budget/goal insights, drill-down, filters.
 - [x] **Phase 8 — Backup & Restore**: `.saku` export/import (JSON + ZIP + AES-GCM + PBKDF2), transactional replace-all restore, schema versioning.
-- [ ] **Phase 9 — Polish & Production**: Accessibility, dark mode QA, migration tests, app icon, splash screen, release build.
+- [x] **Phase 9 — Polish & Production**: Accessibility, dark mode QA, cold-start themes, `FLAG_SECURE` release privacy, R8 release APK/AAB CI, v1.0.0 readiness.

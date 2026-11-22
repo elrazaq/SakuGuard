@@ -25,8 +25,12 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.sakuguard.app.R
 import com.sakuguard.app.core.designsystem.LocalSakuColors
 import com.sakuguard.app.core.designsystem.SakuSpacing
 import com.sakuguard.app.core.formatting.CurrencyFormatter
@@ -86,10 +90,12 @@ internal fun IncomeVsExpenseBarChart(
             }
         }
 
+        val barCd = stringResource(R.string.reports_chart_income_vs_expense_cd, buckets.size)
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(148.dp)
+                .semantics { contentDescription = barCd }
                 .pointerInput(buckets) {
                     detectTapGestures { offset ->
                         val groupWidth = size.width / buckets.size.toFloat()
@@ -173,10 +179,12 @@ internal fun SpendingTrendLineChart(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(SakuSpacing.xs),
     ) {
+        val trendCd = stringResource(R.string.reports_chart_spending_trend_cd, buckets.size)
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(110.dp),
+                .height(110.dp)
+                .semantics { contentDescription = trendCd },
         ) {
             val w = size.width
             val h = size.height
@@ -247,10 +255,12 @@ internal fun CategoryProportionBar(
     if (items.isEmpty()) return
     val totalPermille = items.sumOf { it.percentagePermille }.coerceAtLeast(1)
 
+    val propCd = stringResource(R.string.reports_chart_breakdown_cd, items.size)
     Canvas(
         modifier = modifier
             .fillMaxWidth()
-            .height(10.dp),
+            .height(10.dp)
+            .semantics { contentDescription = propCd },
     ) {
         val w = size.width
         val h = size.height

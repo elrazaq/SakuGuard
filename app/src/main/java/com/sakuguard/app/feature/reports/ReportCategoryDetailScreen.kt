@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -95,7 +96,7 @@ fun ReportCategoryDetailScreen(
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = null,
+                            contentDescription = stringResource(R.string.common_back),
                         )
                     }
                 },
@@ -135,7 +136,8 @@ fun ReportCategoryDetailScreen(
                     state = listState,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(innerPadding),
+                        .padding(innerPadding)
+                        .navigationBarsPadding(),
                     contentPadding = PaddingValues(SakuSpacing.lg),
                     verticalArrangement = Arrangement.spacedBy(SakuSpacing.sm),
                 ) {

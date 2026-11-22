@@ -366,4 +366,10 @@
     <string name="backup_error_size_limit">Ukuran file cadangan melebihi batas yang diizinkan.</string>
     <string name="backup_error_integrity">Cadangan gagal pemeriksaan integritas keuangan. Data lama tidak diubah.</string>
     <string name="backup_error_io">Tidak dapat membaca atau menulis file yang dipilih.</string>
+
+    <!-- Phase 9: Accessibility -->
+    <string name="common_dismiss">Tutup</string>
+    <string name="reports_chart_income_vs_expense_cd">Grafik batang pemasukan vs pengeluaran untuk %1$d periode</string>
+    <string name="reports_chart_spending_trend_cd">Grafik garis tren pengeluaran untuk %1$d periode</string>
+    <string name="reports_chart_breakdown_cd">Batang proporsi kategori untuk %1$d kategori</string>
 </resources>

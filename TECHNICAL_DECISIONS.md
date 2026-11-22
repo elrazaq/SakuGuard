@@ -55,3 +55,6 @@
 ## TD-015: Portable `.saku` Backup Format, Optional AES-256-GCM & Transactional Restore
 - **Decision**: Export all 6 Room entities into a `.saku` ZIP (`manifest.json` + `payload.json` or `payload.enc`) using `kotlinx.serialization.json`, strict `ZipFile` validation (`64 MB` archive / `128 MB` payload / `2` entries), `SHA-256` checksum, and optional `PBKDF2WithHmacSHA256` (`210k` iterations) + `AES/GCM/NoPadding` with canonical manifest AAD.
 - **Decision**: Enforce full `BackupValidator` financial invariants before live DB mutation and perform replace-all restore inside a single `database.withTransaction` (preserving Hilt's `@Singleton` `SakuGuardDatabase` and guaranteeing rollback on any failure). Supports `formatVersion = 1` / `schemaVersion = 2`.
+
+## TD-016: Release Privacy (`FLAG_SECURE`), R8 Verification & Secret-Free Signing Hook
+- **Decision**: Apply `WindowManager.LayoutParams.FLAG_SECURE` only when `!BuildConfig.DEBUG` so debug builds remain testable while release builds protect recent-apps thumbnails. Configure release signing optionally via gitignored `keystore.properties` or `SAKUGUARD_KEYSTORE_*` environment variables, and verify both `assembleRelease` and `bundleRelease` with R8 enabled in GitHub Actions CI.

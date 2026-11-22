@@ -95,7 +95,7 @@ fun BudgetsScreen(
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = null,
+                            contentDescription = stringResource(R.string.common_back),
                         )
                     }
                 },
@@ -277,7 +277,7 @@ private fun ThresholdAlertBanner(
             IconButton(onClick = onDismiss) {
                 Icon(
                     imageVector = Icons.Outlined.Close,
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.common_dismiss),
                 )
             }
         }
