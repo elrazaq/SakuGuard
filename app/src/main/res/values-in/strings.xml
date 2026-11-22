@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SakuGuard</string>
+    <string name="app_tagline">Catat uangmu. Lindungi tujuanmu.</string>
+
+    <string name="nav_home">Beranda</string>
+    <string name="nav_wallets">Dompet</string>
+    <string name="nav_goals">Tujuan</string>
+    <string name="nav_transactions">Transaksi</string>
+    <string name="nav_reports">Laporan</string>
+
+    <string name="placeholder_phase0_badge">Fondasi Fase 0</string>
+    <string name="empty_home_title">Selamat datang di SakuGuard</string>
+    <string name="empty_home_body">Ringkasan keuangan offline Anda akan muncul di sini setelah dompet dan transaksi ditambahkan.</string>
+    <string name="empty_wallets_title">Belum ada dompet</string>
+    <string name="empty_wallets_body">Catat uang tunai, rekening bank, dan e-wallet secara lokal di perangkat Anda.</string>
+    <string name="empty_goals_title">Belum ada target tabungan</string>
+    <string name="empty_goals_body">Buat target tabungan dan lindungi dana yang sudah dialokasikan dari penarikan impulsif.</string>
+    <string name="empty_transactions_title">Belum ada transaksi</string>
+    <string name="empty_transactions_body">Pemasukan, pengeluaran, transfer, dan alokasi target akan ditampilkan di sini.</string>
+    <string name="empty_reports_title">Belum ada laporan</string>
+    <string name="empty_reports_body">Arus kas offline, rincian kategori, dan progres tabungan akan muncul di sini.</string>
+</resources>

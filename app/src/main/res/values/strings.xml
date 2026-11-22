@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SakuGuard</string>
+    <string name="app_tagline">Track your money. Protect your goals.</string>
+
+    <string name="nav_home">Home</string>
+    <string name="nav_wallets">Wallets</string>
+    <string name="nav_goals">Goals</string>
+    <string name="nav_transactions">Transactions</string>
+    <string name="nav_reports">Reports</string>
+
+    <string name="placeholder_phase0_badge">Phase 0 Foundation</string>
+    <string name="empty_home_title">Welcome to SakuGuard</string>
+    <string name="empty_home_body">Your offline financial overview will appear here once wallets and transactions are added.</string>
+    <string name="empty_wallets_title">No wallets yet</string>
+    <string name="empty_wallets_body">Track cash, bank accounts, and e-wallets locally on your device.</string>
+    <string name="empty_goals_title">No savings goals yet</string>
+    <string name="empty_goals_body">Create goals and protect allocated funds from impulsive withdrawals.</string>
+    <string name="empty_transactions_title">No transactions yet</string>
+    <string name="empty_transactions_body">Income, expenses, transfers, and goal allocations will be listed here.</string>
+    <string name="empty_reports_title">No reports yet</string>
+    <string name="empty_reports_body">Offline cash flow, category breakdowns, and savings progress will appear here.</string>
+</resources>
