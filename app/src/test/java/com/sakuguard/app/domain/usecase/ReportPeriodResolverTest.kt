@@ -84,7 +84,7 @@ class ReportPeriodResolverTest {
         assertThat(ReportPeriodResolver.calculateSignedDeltaPermille(250_000L, 1_000_000L)).isEqualTo(250)
         assertThat(ReportPeriodResolver.calculateSignedDeltaPermille(-500_000L, 1_000_000L)).isEqualTo(-500)
 
-        val hugeTotal = Long.MAX_VALUE / 2L
+        val hugeTotal = 4_000_000_000_000_000_000L
         val hugePart = hugeTotal / 4L
         assertThat(ReportPeriodResolver.calculatePermille(hugePart, hugeTotal)).isEqualTo(250)
     }

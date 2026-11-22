@@ -32,7 +32,7 @@ class ReportUseCasesTest {
 
     private val salary = Category("c_sal", "Salary", CategoryType.INCOME, "payments", 0xFF039855L, createdAt = 0L)
     private val food = Category("c_food", "Food", CategoryType.EXPENSE, "restaurant", 0xFFD97706L, createdAt = 0L)
-    private val archivedCat = Category("c_old", "Legacy Bills", CategoryType.EXPENSE, "receipt", 0xFF6B7280L, isArchived = true, createdAt = 0L)
+    private val archivedCat = Category("c_old", "Legacy Bills", CategoryType.EXPENSE, "receipt", 0xFF6B7280L, isArchived = false, createdAt = 0L)
 
     @Before
     fun setup() = runTest {
@@ -68,8 +68,9 @@ class ReportUseCasesTest {
         val nov15 = millis(2026, 11, 15)
         val wallClockDec = millis(2026, 12, 1) // Deliberately different from event date
 
-        // October baseline expense: 400k
+        // October baseline expense: 400k, then archive category afterwards
         recordTx(Transaction("t_oct", TransactionType.EXPENSE, 400_000L, bank.id, categoryId = archivedCat.id, transactionDate = oct10, createdAt = oct10, updatedAt = oct10))
+        store.setArchived(archivedCat.id, archived = true)
 
         // November income: 3_000_000, expense: 300_000, transfer: 1_000_000 (bank -> cash)
         recordTx(Transaction("t_inc", TransactionType.INCOME, 3_000_000L, bank.id, categoryId = salary.id, transactionDate = nov05, createdAt = nov05, updatedAt = nov05))
