@@ -36,3 +36,9 @@
 - Locked `DIRECT_EXPENSE` linked `EXPENSE` transactions from independent Phase 3 edit/delete in `UpdateTransactionUseCase`, `DeleteTransactionUseCase`, and `TransactionDetailViewModel`.
 - Implemented `GoalsScreen`, `GoalFormScreen`, `GoalDetailScreen`, `GoalAllocateScreen`, `GoalWithdrawScreen`, `GoalVisuals`, ViewModels, `SakuNavHost` routes, and EN/ID localization.
 - Added tests: `GoalUseCasesPhase4Test`, `GoalsViewModelTest`, `GoalFormViewModelTest`, `GoalDetailViewModelTest`, `GoalActionViewModelTest`.
+
+## Phase 5 — Dashboard & Visual Polish (2026-11-22)
+- Added SakuGuard adaptive & legacy launcher icon (`ic_launcher`, `ic_launcher_round`) and full-bleed scroll with bottom opacity fade above `SakuBottomBar`.
+- Added `FinancialEngine.calculateMonthlyActivity` (`MonthlyActivity`) using `SafeMath` and explicit `YearMonth`/`ZoneId` local calendar-month boundaries (excluding `TRANSFER`, `GOAL_ALLOCATION`, `GOAL_WITHDRAWAL`).
+- Added `ObserveDashboardUseCase`, `DashboardViewModel` (with presentation-layer `amountsHidden` privacy toggle masking all dashboard monetary figures), and `DashboardScreen` with independent section empty states and navigation to detail/list/create screens.
+- Added `ObserveDashboardUseCaseTest` and `DashboardViewModelTest`.

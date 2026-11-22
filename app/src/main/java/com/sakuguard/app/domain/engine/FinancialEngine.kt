@@ -1,5 +1,6 @@
 package com.sakuguard.app.domain.engine
 
+import com.sakuguard.app.core.formatting.DateFormatter
 import com.sakuguard.app.domain.model.FinancialOverview
 import com.sakuguard.app.domain.model.Goal
 import com.sakuguard.app.domain.model.GoalAllocationEntry
@@ -10,6 +11,14 @@ import com.sakuguard.app.domain.model.Transaction
 import com.sakuguard.app.domain.model.TransactionType
 import com.sakuguard.app.domain.model.Wallet
 import com.sakuguard.app.domain.model.WalletSummary
+import java.time.YearMonth
+import java.time.ZoneId
+
+data class MonthlyActivity(
+    val income: Long,
+    val expenses: Long,
+    val netCashFlow: Long,
+)
 
 /**
  * Pure Kotlin, deterministic financial calculation engine using overflow-safe [Long] arithmetic.
@@ -194,6 +203,32 @@ object FinancialEngine {
             allocatedFunds = allocatedFunds,
             protectedFunds = protectedFunds,
             freeMoney = freeMoney,
+        )
+    }
+
+    fun calculateMonthlyActivity(
+        transactions: List<Transaction>,
+        yearMonth: YearMonth,
+        zoneId: ZoneId = ZoneId.systemDefault(),
+    ): MonthlyActivity {
+        var income = 0L
+        var expenses = 0L
+        for (tx in transactions) {
+            val txMonth = YearMonth.from(DateFormatter.toLocalDate(tx.transactionDate, zoneId))
+            if (txMonth != yearMonth) continue
+            when (tx.type) {
+                TransactionType.INCOME -> income = SafeMath.add(income, tx.amount)
+                TransactionType.EXPENSE -> expenses = SafeMath.add(expenses, tx.amount)
+                TransactionType.TRANSFER,
+                TransactionType.GOAL_ALLOCATION,
+                TransactionType.GOAL_WITHDRAWAL -> Unit
+            }
+        }
+        val netCashFlow = SafeMath.subtract(income, expenses)
+        return MonthlyActivity(
+            income = income,
+            expenses = expenses,
+            netCashFlow = netCashFlow,
         )
     }
 }

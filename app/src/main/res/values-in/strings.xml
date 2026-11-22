@@ -225,4 +225,18 @@
     <string name="goal_error_archived_entity">Pulihkan dompet atau target yang diarsipkan terlebih dahulu.</string>
     <string name="goal_error_completed_allocate">Buka kembali target yang selesai sebelum menambah alokasi.</string>
     <string name="goal_error_generic">Gagal memproses aksi target.</string>
+
+    <!-- Fase 5: Dasbor -->
+    <string name="dashboard_monthly_title">Bulan Ini</string>
+    <string name="dashboard_monthly_income">Pemasukan Bulan Ini</string>
+    <string name="dashboard_monthly_expenses">Pengeluaran Bulan Ini</string>
+    <string name="dashboard_net_cash_flow">Arus Kas Bersih</string>
+    <string name="dashboard_recent_transactions">Transaksi Terbaru</string>
+    <string name="dashboard_view_all">Lihat Semua</string>
+    <string name="dashboard_toggle_privacy">Sembunyikan/tampilkan saldo</string>
+    <string name="dashboard_create_wallet_cta">Buat Dompet Pertama</string>
+    <string name="dashboard_masked_amount">Rp••••••</string>
+    <string name="dashboard_no_active_wallets">Belum ada dompet aktif.</string>
+    <string name="dashboard_no_recent_tx">Belum ada transaksi tercatat.</string>
+    <string name="dashboard_no_active_goals">Belum ada target tabungan aktif.</string>
 </resources>

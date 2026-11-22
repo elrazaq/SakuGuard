@@ -39,6 +39,7 @@ fun SakuHeroBalanceCard(
     title: String,
     amountText: String,
     subtitle: String? = null,
+    trailingAction: (@Composable () -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val sakuColors = LocalSakuColors.current
@@ -75,11 +76,20 @@ fun SakuHeroBalanceCard(
                 .fillMaxWidth()
                 .padding(SakuSpacing.xl),
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyMedium,
-                color = sakuColors.onHero.copy(alpha = 0.85f),
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = sakuColors.onHero.copy(alpha = 0.85f),
+                )
+                if (trailingAction != null) {
+                    trailingAction()
+                }
+            }
             Spacer(modifier = Modifier.height(SakuSpacing.xs))
             Text(
                 text = amountText,

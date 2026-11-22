@@ -2,6 +2,7 @@ package com.sakuguard.app.core.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -56,7 +57,19 @@ fun SakuNavHost(
         startDestination = SakuDestination.Home.route,
         modifier = modifier,
     ) {
-        composable(SakuDestination.Home.route) { DashboardScreen() }
+        composable(SakuDestination.Home.route) {
+            DashboardScreen(
+                onOpenWallets = { navigateToTab(navController, SakuDestination.Wallets.route) },
+                onWalletClick = { walletId -> navController.navigate(SakuRoutes.walletDetail(walletId)) },
+                onAddWallet = { navController.navigate(SakuRoutes.walletCreate()) },
+                onOpenGoals = { navigateToTab(navController, SakuDestination.Goals.route) },
+                onGoalClick = { goalId -> navController.navigate(SakuRoutes.goalDetail(goalId)) },
+                onAddGoal = { navController.navigate(SakuRoutes.goalCreate()) },
+                onOpenTransactions = { navigateToTab(navController, SakuDestination.Transactions.route) },
+                onTransactionClick = { txId -> navController.navigate(SakuRoutes.transactionDetail(txId)) },
+                onAddTransaction = { navController.navigate(SakuRoutes.transactionCreate()) },
+            )
+        }
         composable(SakuDestination.Wallets.route) {
             WalletsScreen(
                 onCreateWallet = { navController.navigate(SakuRoutes.walletCreate()) },
@@ -168,5 +181,15 @@ fun SakuNavHost(
             )
         }
         composable(SakuDestination.Reports.route) { ReportsScreen() }
+    }
+}
+
+private fun navigateToTab(navController: NavHostController, route: String) {
+    navController.navigate(route) {
+        popUpTo(navController.graph.findStartDestination().id) {
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
     }
 }

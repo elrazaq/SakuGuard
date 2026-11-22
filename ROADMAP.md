@@ -5,7 +5,7 @@
 - [x] **Phase 2 — Wallet Management**: Wallet CRUD, opening balances, archival/restore, wallet detail, wallet summary.
 - [x] **Phase 3 — Transaction Management**: Income, expense, transfer, categories, filters, search, edit/delete consistency.
 - [x] **Phase 4 — Savings Goals & Protection**: Multi-wallet goal allocations, withdrawals, Standard / Protected / Strict Protection modes, lifecycle & history.
-- [ ] **Phase 5 — Dashboard**: Total assets, free money, allocated/protected funds, monthly summary, privacy toggle.
+- [x] **Phase 5 — Dashboard**: Total assets, free money, allocated/protected funds, monthly summary, privacy toggle.
 - [ ] **Phase 6 — Budgeting**: Monthly, weekly, custom, one-time budgets, planned spending, 80%/100% threshold warnings.
 - [ ] **Phase 7 — Reports**: Offline income/expense, category breakdown, cash flow, trends, filters.
 - [ ] **Phase 8 — Backup & Restore**: `.saku` export/import (JSON + ZIP + AES-GCM + PBKDF2), merge & replace modes, schema versioning.

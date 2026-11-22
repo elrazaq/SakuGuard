@@ -225,4 +225,18 @@
     <string name="goal_error_archived_entity">Restore archived wallet or goal before continuing.</string>
     <string name="goal_error_completed_allocate">Reopen this completed goal before adding new allocations.</string>
     <string name="goal_error_generic">Unable to complete goal action.</string>
+
+    <!-- Phase 5: Dashboard -->
+    <string name="dashboard_monthly_title">This Month</string>
+    <string name="dashboard_monthly_income">Monthly Income</string>
+    <string name="dashboard_monthly_expenses">Monthly Expenses</string>
+    <string name="dashboard_net_cash_flow">Net Cash Flow</string>
+    <string name="dashboard_recent_transactions">Recent Transactions</string>
+    <string name="dashboard_view_all">View All</string>
+    <string name="dashboard_toggle_privacy">Toggle balance visibility</string>
+    <string name="dashboard_create_wallet_cta">Create First Wallet</string>
+    <string name="dashboard_masked_amount">Rp••••••</string>
+    <string name="dashboard_no_active_wallets">No active wallets yet.</string>
+    <string name="dashboard_no_recent_tx">No transactions recorded yet.</string>
+    <string name="dashboard_no_active_goals">No active savings goals yet.</string>
 </resources>

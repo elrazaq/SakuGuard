@@ -36,3 +36,7 @@
 ## TD-010: Append-Only Linked Goal Ledger & Overflow-Safe Progress
 - **Decision**: Expenses created via `WithdrawFromGoalUseCase(DIRECT_EXPENSE)` cannot be edited or deleted independently through Phase 3 transaction mutation usecases; corrections use new valid operations.
 - **Decision**: `FinancialEngine.calculateGoalProgressPermille` uses `BigInteger` integer division so `Long.MAX_VALUE` targets never overflow.
+
+## TD-011: Dashboard Reactive Observation & Privacy Masking
+- **Decision**: `ObserveDashboardUseCase` combines the 5 repository Room Flows and converges to the latest committed database state after atomic writes (without claiming cross-table SQLite snapshot atomicity on `combine`).
+- **Decision**: `DashboardViewModel` holds `amountsHidden` in presentation state so toggling privacy masks all dashboard monetary values without altering `DashboardSnapshot`.

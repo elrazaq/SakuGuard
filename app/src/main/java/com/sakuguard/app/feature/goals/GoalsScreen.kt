@@ -54,6 +54,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sakuguard.app.R
 import com.sakuguard.app.core.designsystem.EmptyDestinationScaffold
+import com.sakuguard.app.core.designsystem.LocalSakuBottomBarPadding
 import com.sakuguard.app.core.designsystem.LocalSakuColors
 import com.sakuguard.app.core.designsystem.SakuHeroBalanceCard
 import com.sakuguard.app.core.designsystem.SakuKpiPairCard
@@ -104,6 +105,7 @@ fun GoalsScreen(
                 onClick = onCreateGoal,
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.padding(bottom = LocalSakuBottomBarPadding.current),
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Add,
@@ -140,12 +142,12 @@ fun GoalsScreen(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(innerPadding),
+                        .padding(top = innerPadding.calculateTopPadding()),
                     contentPadding = PaddingValues(
                         start = SakuSpacing.lg,
                         end = SakuSpacing.lg,
                         top = SakuSpacing.sm,
-                        bottom = 88.dp,
+                        bottom = LocalSakuBottomBarPadding.current + 96.dp,
                     ),
                     verticalArrangement = Arrangement.spacedBy(SakuSpacing.md),
                 ) {
