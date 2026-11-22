@@ -187,12 +187,12 @@ class BudgetUseCasesTest {
             expenseCategoryId = food.id,
             notes = "meal",
         )
-        // TO_WALLET withdrawal must NOT be counted as budget expense
+        // RETURN_TO_FREE_MONEY withdrawal must NOT be counted as budget expense
         withdrawGoal(
             goalId = "g1",
             walletId = wallet.id,
             amount = 50_000L,
-            target = WithdrawalTarget.TO_WALLET,
+            target = WithdrawalTarget.RETURN_TO_FREE_MONEY,
             date = april5,
             reason = null,
             expenseCategoryId = null,
