@@ -35,3 +35,6 @@ Builds and unit tests run via the Gradle Wrapper on JDK 17:
 ```
 
 See [ROADMAP.md](ROADMAP.md) and [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) for project status and release verification.
+
+## License
+Licensed under the [Apache License, Version 2.0](LICENSE).
