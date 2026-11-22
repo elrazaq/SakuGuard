@@ -63,7 +63,7 @@ class TransactionInvariantsTest {
             createWallet(bank.copy(id = "w-bad", openingBalance = -100L))
         }
         assertThrowsSuspend<DomainException.PreTrackingDateException> {
-            recordTx(Transaction("t-old", TransactionType.INCOME, 100_000L, bank.id, categoryId = catSalary.id, transactionDate = 999L, createdAt = 1_000L, updatedAt = 1_000L))
+            recordTx(Transaction("t-old", TransactionType.INCOME, 100_000L, bank.id, categoryId = catSalary.id, transactionDate = 1_000L - 86_400_000L, createdAt = 1_000L, updatedAt = 1_000L))
         }
     }
 
