@@ -28,3 +28,7 @@
 
 ## TD-008: Integer-Only Monetary Input (`CurrencyInputParser`)
 - **Decision**: Parse wallet opening balance inputs as digits-only `Long` via `CurrencyInputParser.parseNonNegativeIdr`, rejecting blanks, decimals, signs, and `Long` overflow rather than silently coercing invalid input.
+
+## TD-009: Calendar-Day Tracking Start Date & Archived Wallet Immutability
+- **Decision**: Compare `transactionDate` and `wallet.trackingStartDate` at local calendar-day granularity (`LedgerValidator.isBeforeTrackingDay`), converting Material 3 `DatePicker` UTC midnight to local start-of-day.
+- **Decision**: Reject edits or deletes on transactions involving any currently archived wallet (original or resulting), and block Phase 3 mutation usecases from modifying `GOAL_ALLOCATION` or `GOAL_WITHDRAWAL` records directly.

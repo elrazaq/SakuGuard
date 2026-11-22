@@ -83,7 +83,7 @@ class AllocateToGoalUseCase @Inject constructor(
             if (wallet.isArchived) {
                 throw DomainException.ArchivedEntityException("Cannot allocate from archived wallet")
             }
-            if (date < wallet.trackingStartDate) {
+            if (LedgerValidator.isBeforeTrackingDay(date, wallet.trackingStartDate)) {
                 throw DomainException.PreTrackingDateException("Allocation date precedes wallet tracking start")
             }
             val goal = goalRepository.getGoalById(goalId)
@@ -151,7 +151,7 @@ class WithdrawFromGoalUseCase @Inject constructor(
             if (wallet.isArchived) {
                 throw DomainException.ArchivedEntityException("Cannot withdraw from archived wallet")
             }
-            if (date < wallet.trackingStartDate) {
+            if (LedgerValidator.isBeforeTrackingDay(date, wallet.trackingStartDate)) {
                 throw DomainException.PreTrackingDateException("Withdrawal date precedes wallet tracking start")
             }
             val goal = goalRepository.getGoalById(goalId)

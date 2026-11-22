@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sakuguard.app.R
 import com.sakuguard.app.core.formatting.CurrencyInputParser
+import com.sakuguard.app.core.formatting.DateFormatter
 import com.sakuguard.app.domain.model.DomainException
 import com.sakuguard.app.domain.model.Wallet
 import com.sakuguard.app.domain.model.WalletType
@@ -153,7 +154,7 @@ class WalletFormViewModel @Inject constructor(
                             name = current.name.trim(),
                             type = current.type,
                             openingBalance = parsedBalance,
-                            trackingStartDate = now,
+                            trackingStartDate = DateFormatter.startOfDayMillis(now),
                             description = current.description.trim(),
                             colorHex = current.colorHex,
                             iconKey = current.iconKey,

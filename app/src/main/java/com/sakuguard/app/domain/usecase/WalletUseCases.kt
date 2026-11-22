@@ -111,7 +111,7 @@ class UpdateWalletUseCase @Inject constructor(
             val transactions = transactionRepository.getAllTransactions()
             for (tx in transactions) {
                 if ((tx.walletId == existing.id || tx.destinationWalletId == existing.id) &&
-                    tx.transactionDate < normalized.trackingStartDate
+                    LedgerValidator.isBeforeTrackingDay(tx.transactionDate, normalized.trackingStartDate)
                 ) {
                     throw DomainException.PreTrackingDateException(
                         "Existing transaction ${tx.id} precedes new tracking start date",

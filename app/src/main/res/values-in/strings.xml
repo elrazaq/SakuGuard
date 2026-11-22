@@ -68,4 +68,72 @@
     <string name="common_cancel">Batal</string>
     <string name="common_confirm">Konfirmasi</string>
     <string name="common_back">Kembali</string>
+    <string name="common_ok">OK</string>
+    <string name="common_delete">Hapus</string>
+
+    <!-- Fase 3: Manajemen Transaksi -->
+    <string name="tx_title">Transaksi</string>
+    <string name="tx_add_button">Tambah Transaksi</string>
+    <string name="tx_create_title">Transaksi Baru</string>
+    <string name="tx_edit_title">Ubah Transaksi</string>
+    <string name="tx_detail_title">Detail Transaksi</string>
+    <string name="tx_search_hint">Cari catatan, kategori, atau dompet</string>
+    <string name="tx_filter_all">Semua</string>
+    <string name="tx_type_income">Pemasukan</string>
+    <string name="tx_type_expense">Pengeluaran</string>
+    <string name="tx_type_transfer">Transfer</string>
+    <string name="tx_type_goal_allocation">Alokasi Target</string>
+    <string name="tx_type_goal_withdrawal">Penarikan Target</string>
+    <string name="tx_filter_wallet">Dompet</string>
+    <string name="tx_filter_category">Kategori</string>
+    <string name="tx_filter_date">Tanggal</string>
+    <string name="tx_filter_all_wallets">Semua Dompet</string>
+    <string name="tx_filter_all_categories">Semua Kategori</string>
+    <string name="tx_filter_all_dates">Semua Tanggal</string>
+    <string name="tx_filter_this_month">Bulan Ini</string>
+    <string name="tx_filter_last_7_days">7 Hari Terakhir</string>
+    <string name="tx_filter_empty_title">Tidak ada transaksi yang cocok</string>
+    <string name="tx_filter_empty_body">Coba ubah kata kunci pencarian atau filter Anda.</string>
+
+    <string name="tx_amount_label">Jumlah</string>
+    <string name="tx_wallet_label">Dompet</string>
+    <string name="tx_source_wallet_label">Dari Dompet</string>
+    <string name="tx_destination_wallet_label">Ke Dompet</string>
+    <string name="tx_category_label">Kategori</string>
+    <string name="tx_date_label">Tanggal</string>
+    <string name="tx_note_label">Catatan (opsional)</string>
+    <string name="tx_save_button">Simpan Transaksi</string>
+    <string name="tx_delete_confirm_title">Hapus transaksi ini?</string>
+    <string name="tx_delete_confirm_body">Transaksi akan dihapus permanen dan saldo dompet terkait akan dihitung ulang.</string>
+    <string name="tx_no_active_wallets">Buat dompet aktif terlebih dahulu sebelum mencatat transaksi.</string>
+
+    <string name="tx_error_amount">Masukkan jumlah valid lebih dari 0.</string>
+    <string name="tx_error_wallet_required">Pilih dompet.</string>
+    <string name="tx_error_dest_wallet_required">Pilih dompet tujuan.</string>
+    <string name="tx_error_same_wallet">Dompet asal dan tujuan harus berbeda.</string>
+    <string name="tx_error_category_required">Pilih kategori.</string>
+    <string name="tx_error_insufficient_free">Uang bebas di dompet terpilih tidak mencukupi.</string>
+    <string name="tx_error_archived_wallet">Dompet diarsipkan tidak dapat diubah. Pulihkan dompet terlebih dahulu.</string>
+    <string name="tx_error_pre_tracking_date">Tanggal transaksi tidak boleh sebelum tanggal mulai pencatatan dompet.</string>
+    <string name="tx_error_overflow">Jumlah melebihi batas maksimum saldo.</string>
+    <string name="tx_error_goal_ledger_locked">Transaksi alokasi target hanya dapat dikelola dari menu Tujuan.</string>
+    <string name="tx_error_generic">Gagal memproses transaksi.</string>
+
+    <!-- Kategori default terlokalisasi -->
+    <string name="cat_salary">Gaji</string>
+    <string name="cat_freelance">Freelance</string>
+    <string name="cat_bonus">Bonus</string>
+    <string name="cat_business">Bisnis</string>
+    <string name="cat_investment">Investasi</string>
+    <string name="cat_other_income">Pemasukan Lainnya</string>
+    <string name="cat_food">Makanan</string>
+    <string name="cat_transportation">Transportasi</string>
+    <string name="cat_shopping">Belanja</string>
+    <string name="cat_household">Rumah Tangga</string>
+    <string name="cat_bills">Tagihan</string>
+    <string name="cat_health">Kesehatan</string>
+    <string name="cat_education">Pendidikan</string>
+    <string name="cat_entertainment">Hiburan</string>
+    <string name="cat_travel">Perjalanan</string>
+    <string name="cat_other_expenses">Pengeluaran Lainnya</string>
 </resources>

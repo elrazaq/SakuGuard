@@ -1,15 +1,27 @@
 package com.sakuguard.app.domain.usecase
 
+import com.sakuguard.app.core.formatting.DateFormatter
 import com.sakuguard.app.domain.engine.FinancialEngine
 import com.sakuguard.app.domain.model.DomainException
 import com.sakuguard.app.domain.model.GoalAllocationEntry
 import com.sakuguard.app.domain.model.Transaction
 import com.sakuguard.app.domain.model.Wallet
+import java.time.ZoneId
 
 /**
  * Validates that a candidate post-mutation ledger state satisfies all financial invariants.
  */
 object LedgerValidator {
+
+    fun isBeforeTrackingDay(
+        transactionDate: Long,
+        trackingStartDate: Long,
+        zoneId: ZoneId = ZoneId.systemDefault(),
+    ): Boolean {
+        val txDay = DateFormatter.toLocalDate(transactionDate, zoneId)
+        val startDay = DateFormatter.toLocalDate(trackingStartDate, zoneId)
+        return txDay.isBefore(startDay)
+    }
 
     fun requirePositiveAmount(amount: Long, label: String = "Amount") {
         if (amount <= 0L) {

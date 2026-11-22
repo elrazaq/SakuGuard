@@ -22,3 +22,10 @@
 - Added `ObserveWalletPortfolioUseCase` and `ObserveWalletDetailUseCase` powered by `FinancialEngine`, plus non-blank name validation in `CreateWalletUseCase` / `UpdateWalletUseCase`.
 - Implemented `WalletsScreen`, `WalletDetailScreen`, `WalletFormScreen` (Create/Edit), `WalletsViewModel`, `WalletDetailViewModel`, `WalletFormViewModel`, `WalletVisuals`, nested routes in `SakuNavHost`, and full EN + ID strings.
 - Added unit tests: `CurrencyInputParserTest`, `WalletUseCasesTest`, `WalletsViewModelTest`, `WalletFormViewModelTest`, `WalletDetailViewModelTest`.
+
+## Phase 3 — Transaction Management (2026-11-22)
+- Added `DateFormatter` (`java.time` calendar-day & Material 3 `DatePicker` UTC-midnight normalization) and `LedgerValidator.isBeforeTrackingDay` so same-day transactions are accepted across timezones.
+- Hardened `UpdateTransactionUseCase` & `DeleteTransactionUseCase`: reject mutations involving archived wallets (original or resulting), reject direct edits/deletes on `GOAL_ALLOCATION` and `GOAL_WITHDRAWAL`, and enforce `CategoryType` matching on category updates.
+- Added `ObserveTransactionsFeedUseCase`, `CategoryVisuals` (EN/ID localized default categories), `TransactionsViewModel`, `TransactionFormViewModel`, `TransactionDetailViewModel`.
+- Implemented `TransactionsScreen` (search, type/wallet/category/date filters, monthly grouping, empty states), `TransactionFormScreen` (Income/Expense/Transfer, locked type on edit, double-submit guard), `TransactionDetailScreen`, and `SakuNavHost` routes.
+- Added tests: `TransactionUseCasesPhase3Test`, `TransactionsViewModelTest`, `TransactionFormViewModelTest`, `TransactionDetailViewModelTest`.
