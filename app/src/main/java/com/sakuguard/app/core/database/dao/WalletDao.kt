@@ -22,6 +22,12 @@ interface WalletDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(wallet: WalletEntity)
 
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertAll(wallets: List<WalletEntity>)
+
+    @Query("DELETE FROM wallets")
+    suspend fun deleteAll()
+
     @Update
     suspend fun update(wallet: WalletEntity)
 

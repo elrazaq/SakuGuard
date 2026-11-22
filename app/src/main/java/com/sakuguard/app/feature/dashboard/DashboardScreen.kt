@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Backup
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.NorthEast
@@ -83,6 +84,7 @@ fun DashboardScreen(
     onTransactionClick: (String) -> Unit = {},
     onAddTransaction: () -> Unit = {},
     onOpenBudgets: () -> Unit = {},
+    onOpenBackupRestore: () -> Unit = {},
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -104,6 +106,12 @@ fun DashboardScreen(
                 actions = {
                     TextButton(onClick = onOpenBudgets) {
                         Text(text = stringResource(R.string.dashboard_budgets_cta))
+                    }
+                    IconButton(onClick = onOpenBackupRestore) {
+                        Icon(
+                            imageVector = Icons.Outlined.Backup,
+                            contentDescription = stringResource(R.string.backup_title),
+                        )
                     }
                 },
                 expandedHeight = 48.dp,

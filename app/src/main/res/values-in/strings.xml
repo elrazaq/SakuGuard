@@ -337,4 +337,33 @@
     <string name="reports_view_goals">Lihat Target</string>
 
     <string name="reports_category_detail_empty">Belum ada transaksi yang cocok pada periode ini.</string>
+
+    <!-- Phase 8: Backup & Restore -->
+    <string name="backup_title">Cadangkan &amp; Pulihkan</string>
+    <string name="backup_export_title">Ekspor Cadangan</string>
+    <string name="backup_export_body">Simpan cadangan offline .saku untuk semua dompet, kategori, transaksi, target, dan anggaran.</string>
+    <string name="backup_encrypt_toggle">Lindungi dengan kata sandi (AES-256-GCM)</string>
+    <string name="backup_unencrypted_warning">Tanpa kata sandi, siapa pun yang mengakses file ini dapat membaca data keuangan Anda.</string>
+    <string name="backup_password_label">Kata Sandi Cadangan</string>
+    <string name="backup_password_confirm_label">Konfirmasi Kata Sandi</string>
+    <string name="backup_export_button">Ekspor (.saku)</string>
+    <string name="backup_restore_title">Pulihkan Cadangan</string>
+    <string name="backup_restore_body">Pilih file cadangan .saku untuk diperiksa dan dipulihkan. Pemulihan mengganti semua data saat ini.</string>
+    <string name="backup_restore_button">Pilih File .saku</string>
+    <string name="backup_restore_confirm_title">Ganti semua data yang ada?</string>
+    <string name="backup_restore_confirm_warning">Memulihkan cadangan ini akan mengganti seluruh dompet, transaksi, target, dan anggaran saat ini secara permanen.</string>
+    <string name="backup_restore_meta_format">Dibuat: %1$s • App v%2$s (Skema v%3$d)</string>
+    <string name="backup_restore_counts_format">%1$d dompet • %2$d transaksi • %3$d target • %4$d anggaran</string>
+    <string name="backup_restore_confirm_button">Pulihkan Sekarang</string>
+    <string name="backup_export_success">Cadangan berhasil diekspor (%1$d transaksi).</string>
+    <string name="backup_restore_success">Cadangan berhasil dipulihkan (%1$d transaksi).</string>
+    <string name="backup_error_password_blank">Masukkan kata sandi atau matikan enkripsi.</string>
+    <string name="backup_error_password_mismatch">Kata sandi tidak cocok.</string>
+    <string name="backup_error_password_required">Cadangan ini terenkripsi. Masukkan kata sandi untuk memulihkan.</string>
+    <string name="backup_error_wrong_password">Kata sandi salah atau file terenkripsi rusak.</string>
+    <string name="backup_error_unsupported_version">Versi cadangan ini tidak didukung oleh SakuGuard versi ini.</string>
+    <string name="backup_error_invalid_archive">File cadangan .saku tidak valid atau rusak.</string>
+    <string name="backup_error_size_limit">Ukuran file cadangan melebihi batas yang diizinkan.</string>
+    <string name="backup_error_integrity">Cadangan gagal pemeriksaan integritas keuangan. Data lama tidak diubah.</string>
+    <string name="backup_error_io">Tidak dapat membaca atau menulis file yang dipilih.</string>
 </resources>

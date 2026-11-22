@@ -337,4 +337,33 @@
     <string name="reports_view_goals">View Goals</string>
 
     <string name="reports_category_detail_empty">No matching transactions in this period.</string>
+
+    <!-- Phase 8: Backup & Restore -->
+    <string name="backup_title">Backup &amp; Restore</string>
+    <string name="backup_export_title">Export Backup</string>
+    <string name="backup_export_body">Save an offline .saku backup of all wallets, categories, transactions, goals, and budgets.</string>
+    <string name="backup_encrypt_toggle">Protect with password (AES-256-GCM)</string>
+    <string name="backup_unencrypted_warning">Without a password, anyone with access to the file can read your financial records.</string>
+    <string name="backup_password_label">Backup Password</string>
+    <string name="backup_password_confirm_label">Confirm Password</string>
+    <string name="backup_export_button">Export (.saku)</string>
+    <string name="backup_restore_title">Restore Backup</string>
+    <string name="backup_restore_body">Select a .saku backup file to inspect and restore. Restoring replaces all current data.</string>
+    <string name="backup_restore_button">Select .saku File</string>
+    <string name="backup_restore_confirm_title">Replace all existing data?</string>
+    <string name="backup_restore_confirm_warning">Restoring this backup will permanently replace all current wallets, transactions, goals, and budgets.</string>
+    <string name="backup_restore_meta_format">Created: %1$s • App v%2$s (Schema v%3$d)</string>
+    <string name="backup_restore_counts_format">%1$d wallets • %2$d transactions • %3$d goals • %4$d budgets</string>
+    <string name="backup_restore_confirm_button">Restore Now</string>
+    <string name="backup_export_success">Backup exported (%1$d transactions).</string>
+    <string name="backup_restore_success">Backup restored (%1$d transactions).</string>
+    <string name="backup_error_password_blank">Enter a password or turn off encryption.</string>
+    <string name="backup_error_password_mismatch">Passwords do not match.</string>
+    <string name="backup_error_password_required">This backup is encrypted. Enter the password to restore.</string>
+    <string name="backup_error_wrong_password">Incorrect password or corrupted encrypted backup.</string>
+    <string name="backup_error_unsupported_version">This backup version is not supported by this version of SakuGuard.</string>
+    <string name="backup_error_invalid_archive">Invalid or corrupted .saku backup file.</string>
+    <string name="backup_error_size_limit">Backup file exceeds the allowed size limit.</string>
+    <string name="backup_error_integrity">Backup failed financial integrity checks. Existing data was not changed.</string>
+    <string name="backup_error_io">Could not read or write the selected file.</string>
 </resources>

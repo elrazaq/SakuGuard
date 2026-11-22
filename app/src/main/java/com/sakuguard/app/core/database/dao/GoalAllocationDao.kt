@@ -46,6 +46,12 @@ interface GoalAllocationDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(entry: GoalAllocationEntity)
 
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertAll(entries: List<GoalAllocationEntity>)
+
+    @Query("DELETE FROM goal_allocations")
+    suspend fun deleteAll()
+
     @Update
     suspend fun update(entry: GoalAllocationEntity)
 

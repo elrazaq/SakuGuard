@@ -24,6 +24,12 @@ interface CategoryDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAllIgnore(categories: List<CategoryEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertAll(categories: List<CategoryEntity>)
+
+    @Query("DELETE FROM categories")
+    suspend fun deleteAll()
+
     @Query("UPDATE categories SET isArchived = :archived WHERE id = :categoryId")
     suspend fun setArchived(categoryId: String, archived: Boolean)
 }

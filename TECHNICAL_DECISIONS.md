@@ -51,3 +51,7 @@
 ## TD-014: Reports SQL Aggregation, Transfer Separation & Historical Semantics
 - **Decision**: Implement Phase 7 Reports with zero DB migration on `SakuGuardDatabase v2`, using native Compose `Canvas` charts and SQL aggregation (`TransactionDao`, `GoalAllocationDao` joined on `transactions.transactionDate`).
 - **Decision**: Separate `Transfer In` and `Transfer Out` per wallet in Wallet Activity while excluding transfers from Total Income, Total Expense, and Net Cash Flow; use `BigInteger` for overflow-safe trend/category percentages (`null` on zero baseline); and document current-name/current-limit semantics for historical categories and budgets without adding snapshot tables.
+
+## TD-015: Portable `.saku` Backup Format, Optional AES-256-GCM & Transactional Restore
+- **Decision**: Export all 6 Room entities into a `.saku` ZIP (`manifest.json` + `payload.json` or `payload.enc`) using `kotlinx.serialization.json`, strict `ZipFile` validation (`64 MB` archive / `128 MB` payload / `2` entries), `SHA-256` checksum, and optional `PBKDF2WithHmacSHA256` (`210k` iterations) + `AES/GCM/NoPadding` with canonical manifest AAD.
+- **Decision**: Enforce full `BackupValidator` financial invariants before live DB mutation and perform replace-all restore inside a single `database.withTransaction` (preserving Hilt's `@Singleton` `SakuGuardDatabase` and guaranteeing rollback on any failure). Supports `formatVersion = 1` / `schemaVersion = 2`.

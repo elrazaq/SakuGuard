@@ -57,3 +57,10 @@
 - Added zero-migration SQL aggregation queries in `TransactionDao` (`observeCategoryTotalsForPeriod`, `observeWalletActivityForPeriod` separating `Transfer In`/`Transfer Out` from `Income`/`Expense`, `getPeriodTotals` inside `@Transaction`) and `GoalAllocationDao` (`observePeriodGoalContributions` joining `transactions.transactionDate`).
 - Implemented `ObserveReportsUseCase`, `ReportsViewModel`, `ReportCategoryDetailViewModel` (keyset `LIMIT 20` drill-down), `ReportCharts` (native Compose `Canvas` grouped bar, trend line, and proportion bar), `ReportsScreen`, `ReportCategoryDetailScreen`, `SakuNavHost` routes, and EN/ID localization.
 - Added unit tests (`ReportPeriodResolverTest`, `ReportUseCasesTest`, `ReportsViewModelTest`) and `ReportQueryPlanTest` (`androidTest`).
+
+## Phase 8 — Backup & Restore (2026-11-22)
+- Implemented portable `.saku` backup format (`manifest.json` + `payload.json` or `payload.enc` ZIP container) with strict defensive limits (`MAX_ARCHIVE_BYTES = 64 MB`, `MAX_MANIFEST_BYTES = 64 KB`, `MAX_PAYLOAD_BYTES = 128 MB`, `MAX_ENTRY_COUNT = 2`, `ZipFile` central-directory validation, path-traversal/duplicate rejection, 50x compression-ratio guard, and manifest-vs-payload `recordCounts` verification).
+- Implemented `BackupCrypto` (`PBKDF2WithHmacSHA256` at `210,000` iterations, 16B `SecureRandom` salt, 12B IV, `AES/GCM/NoPadding` 128-bit tag with canonical manifest AAD, `SHA-256` checksum, and `CharArray` zeroing).
+- Implemented `BackupValidator` verifying all FK, transaction/category, transfer, `DIRECT_EXPENSE`, derived balance/Free Money/Protected Funds, tracking-date, `SafeMath`, and budget invariants prior to DB mutation.
+- Implemented `BackupRepositoryImpl` (single `withTransaction` export snapshot + self-verification + SAF write/cleanup; transactional reverse-FK `deleteAll` + forward-FK chunked `insertAll` restore), `BackupRestoreViewModel`, `BackupRestoreScreen`, `SakuNavHost` route, `DashboardScreen` entry button, and EN/ID strings.
+- Added unit tests (`BackupCryptoTest`, `BackupArchiveCodecTest`, `BackupValidatorTest`, `BackupRestoreViewModelTest`) and `BackupRestoreDatabaseTest` (`androidTest`).

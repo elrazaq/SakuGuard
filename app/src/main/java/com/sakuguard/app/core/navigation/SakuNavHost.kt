@@ -8,6 +8,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.sakuguard.app.feature.backup.BackupRestoreScreen
 import com.sakuguard.app.feature.budgets.BudgetDetailScreen
 import com.sakuguard.app.feature.budgets.BudgetFormScreen
 import com.sakuguard.app.feature.budgets.BudgetsScreen
@@ -42,6 +43,7 @@ object SakuRoutes {
     const val BUDGET_FORM = "budget_form?budgetId={budgetId}"
     const val REPORT_CATEGORY_DETAIL =
         "report_category_detail/{type}/{categoryId}/{startDate}/{endDateExclusive}"
+    const val BACKUP_RESTORE = "backup_restore"
 
     fun walletDetail(walletId: String): String = "wallet_detail/$walletId"
     fun walletCreate(): String = "wallet_form"
@@ -71,6 +73,8 @@ object SakuRoutes {
         val catKey = categoryId ?: ReportCategoryDetailViewModel.UNCATEGORIZED_KEY
         return "report_category_detail/${type.name}/$catKey/$startDate/$endDateExclusive"
     }
+
+    fun backupRestore(): String = BACKUP_RESTORE
 }
 
 @Composable
@@ -95,6 +99,7 @@ fun SakuNavHost(
                 onTransactionClick = { txId -> navController.navigate(SakuRoutes.transactionDetail(txId)) },
                 onAddTransaction = { navController.navigate(SakuRoutes.transactionCreate()) },
                 onOpenBudgets = { navController.navigate(SakuRoutes.budgets()) },
+                onOpenBackupRestore = { navController.navigate(SakuRoutes.backupRestore()) },
             )
         }
         composable(SakuDestination.Wallets.route) {
@@ -257,6 +262,11 @@ fun SakuNavHost(
             ),
         ) {
             BudgetFormScreen(
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(SakuRoutes.BACKUP_RESTORE) {
+            BackupRestoreScreen(
                 onBack = { navController.popBackStack() },
             )
         }
