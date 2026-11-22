@@ -211,7 +211,13 @@ private fun TransactionFilterSection(
         OutlinedTextField(
             value = uiState.filter.searchQuery,
             onValueChange = onSearchQueryChange,
-            placeholder = { Text(stringResource(R.string.tx_search_hint)) },
+            placeholder = {
+                Text(
+                    text = stringResource(R.string.tx_search_hint),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
             leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
             trailingIcon = {
                 if (uiState.filter.searchQuery.isNotEmpty()) {

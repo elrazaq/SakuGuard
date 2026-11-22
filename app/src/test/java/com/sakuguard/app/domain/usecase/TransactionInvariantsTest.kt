@@ -96,7 +96,7 @@ class TransactionInvariantsTest {
     }
 
     @Test
-    fun `direct expense withdrawal updates and deletes linked pair atomically`() = runTest {
+    fun `direct expense withdrawal updates balances and locks linked expense from independent mutation`() = runTest {
         allocateToGoal(goal.id, bank.id, 2_000_000L, date = 2_000L)
         withdrawFromGoal(goal.id, bank.id, 1_000_000L, WithdrawalTarget.DIRECT_EXPENSE, date = 3_000L, reason = "Laptop repair", expenseCategoryId = catFood.id)
 
@@ -105,14 +105,14 @@ class TransactionInvariantsTest {
         assertThat(FinancialEngine.calculateGoalAllocatedAmount(goal.id, store.getAllAllocations())).isEqualTo(1_000_000L)
 
         val expenseTx = store.getAllTransactions().first { it.type == TransactionType.EXPENSE }
-        updateTx(expenseTx.copy(amount = 1_500_000L, updatedAt = 3_100L))
-        assertThat(FinancialEngine.calculateWalletBalance(bank, store.getAllTransactions())).isEqualTo(1_500_000L)
-        assertThat(FinancialEngine.calculateGoalAllocatedAmount(goal.id, store.getAllAllocations())).isEqualTo(500_000L)
-
-        deleteTx(expenseTx.id)
-        assertThat(FinancialEngine.calculateWalletBalance(bank, store.getAllTransactions())).isEqualTo(3_000_000L)
-        assertThat(FinancialEngine.calculateGoalAllocatedAmount(goal.id, store.getAllAllocations())).isEqualTo(2_000_000L)
-        assertThat(store.getAllTransactions().none { it.type == TransactionType.GOAL_WITHDRAWAL }).isTrue()
+        assertThrowsSuspend<DomainException.InvalidTransactionMutationException> {
+            updateTx(expenseTx.copy(amount = 1_500_000L, updatedAt = 3_100L))
+        }
+        assertThrowsSuspend<DomainException.InvalidTransactionMutationException> {
+            deleteTx(expenseTx.id)
+        }
+        assertThat(FinancialEngine.calculateWalletBalance(bank, store.getAllTransactions())).isEqualTo(2_000_000L)
+        assertThat(FinancialEngine.calculateGoalAllocatedAmount(goal.id, store.getAllAllocations())).isEqualTo(1_000_000L)
     }
 
     @Test

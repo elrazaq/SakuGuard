@@ -205,54 +205,20 @@ class UpdateTransactionUseCase @Inject constructor(
             val currentAllocations = goalRepository.getAllAllocations()
 
             val linkedAllocForExpense = transactionRepository.getAllocationByLinkedExpenseId(existing.id)
-
-            val updatedTransactions: List<Transaction>
-            val updatedAllocations: List<com.sakuguard.app.domain.model.GoalAllocationEntry>
-            var extraTxToUpdate: Transaction? = null
-            var allocToUpdate: com.sakuguard.app.domain.model.GoalAllocationEntry? = null
-
             if (linkedAllocForExpense != null) {
-                val syncedAlloc = linkedAllocForExpense.copy(
-                    walletId = updated.walletId,
-                    amount = updated.amount,
+                throw DomainException.InvalidTransactionMutationException(
+                    "Expense linked to goal withdrawal cannot be edited independently",
                 )
-                allocToUpdate = syncedAlloc
-                val withdrawTx = currentTransactions.firstOrNull { it.id == linkedAllocForExpense.transactionId }
-                    ?: throw DomainException.InvalidTransactionMutationException("Missing linked withdrawal ${linkedAllocForExpense.transactionId}")
-                extraTxToUpdate = withdrawTx.copy(
-                    walletId = updated.walletId,
-                    amount = updated.amount,
-                    transactionDate = updated.transactionDate,
-                    updatedAt = updated.updatedAt,
-                )
-                updatedTransactions = currentTransactions.map {
-                    when (it.id) {
-                        updated.id -> updated
-                        extraTxToUpdate.id -> extraTxToUpdate
-                        else -> it
-                    }
-                }
-                updatedAllocations = currentAllocations.map {
-                    if (it.id == syncedAlloc.id) syncedAlloc else it
-                }
-            } else {
-                updatedTransactions = currentTransactions.map { if (it.id == updated.id) updated else it }
-                updatedAllocations = currentAllocations
             }
 
+            val updatedTransactions = currentTransactions.map { if (it.id == updated.id) updated else it }
             LedgerValidator.validateResultingState(
                 wallets = walletRepository.getAllWallets(),
                 transactions = updatedTransactions,
-                allocations = updatedAllocations,
+                allocations = currentAllocations,
             )
 
             transactionRepository.updateTransactionRecord(updated)
-            if (extraTxToUpdate != null) {
-                transactionRepository.updateTransactionRecord(extraTxToUpdate)
-            }
-            if (allocToUpdate != null) {
-                transactionRepository.updateAllocationEntry(allocToUpdate)
-            }
         }
     }
 }
@@ -287,32 +253,21 @@ class DeleteTransactionUseCase @Inject constructor(
             }
 
             val linkedAlloc = transactionRepository.getAllocationByLinkedExpenseId(existing.id)
-            val txIdsToDelete = buildSet {
-                add(existing.id)
-                if (linkedAlloc != null) {
-                    add(linkedAlloc.transactionId)
-                }
+            if (linkedAlloc != null) {
+                throw DomainException.InvalidTransactionMutationException(
+                    "Expense linked to goal withdrawal cannot be deleted independently",
+                )
             }
 
-            val remainingTxs = transactionRepository.getAllTransactions().filterNot { it.id in txIdsToDelete }
-            val remainingAllocs = if (linkedAlloc != null) {
-                goalRepository.getAllAllocations().filterNot { it.id == linkedAlloc.id }
-            } else {
-                goalRepository.getAllAllocations()
-            }
+            val remainingTxs = transactionRepository.getAllTransactions().filterNot { it.id == existing.id }
 
             LedgerValidator.validateResultingState(
                 wallets = walletRepository.getAllWallets(),
                 transactions = remainingTxs,
-                allocations = remainingAllocs,
+                allocations = goalRepository.getAllAllocations(),
             )
 
-            if (linkedAlloc != null) {
-                transactionRepository.deleteAllocationEntryById(linkedAlloc.id)
-            }
-            for (id in txIdsToDelete) {
-                transactionRepository.deleteTransactionById(id)
-            }
+            transactionRepository.deleteTransactionById(existing.id)
         }
     }
 }

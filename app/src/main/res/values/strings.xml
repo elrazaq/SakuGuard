@@ -77,7 +77,7 @@
     <string name="tx_create_title">New Transaction</string>
     <string name="tx_edit_title">Edit Transaction</string>
     <string name="tx_detail_title">Transaction Details</string>
-    <string name="tx_search_hint">Search notes, category, or wallet</string>
+    <string name="tx_search_hint">Search transactions</string>
     <string name="tx_filter_all">All</string>
     <string name="tx_type_income">Income</string>
     <string name="tx_type_expense">Expense</string>
@@ -136,4 +136,93 @@
     <string name="cat_entertainment">Entertainment</string>
     <string name="cat_travel">Travel</string>
     <string name="cat_other_expenses">Other Expenses</string>
+
+    <!-- Phase 4: Savings Goals & Protection -->
+    <string name="goals_title">Savings Goals</string>
+    <string name="goals_total_allocated">Total Allocated</string>
+    <string name="goals_protected_funds">Protected Funds</string>
+    <string name="goals_active_section">Active Goals</string>
+    <string name="goals_completed_section">Completed Goals (%1$d)</string>
+    <string name="goals_archived_section">Archived Goals (%1$d)</string>
+    <string name="goals_add_button">Create Goal</string>
+    <string name="goals_create_title">Create Goal</string>
+    <string name="goals_edit_title">Edit Goal</string>
+    <string name="goals_detail_title">Goal Details</string>
+
+    <string name="goal_name_label">Goal Name</string>
+    <string name="goal_name_hint">e.g. Emergency Fund, New Laptop</string>
+    <string name="goal_target_label">Target Amount</string>
+    <string name="goal_deadline_label">Target Date (optional)</string>
+    <string name="goal_deadline_none">No target date</string>
+    <string name="goal_deadline_clear">Clear</string>
+    <string name="goal_description_label">Description (optional)</string>
+    <string name="goal_protection_label">Protection Mode</string>
+    <string name="goal_save_button">Save Goal</string>
+
+    <string name="goal_protection_standard">Standard</string>
+    <string name="goal_protection_protected">Protected</string>
+    <string name="goal_protection_strict">Strict Protection</string>
+    <string name="goal_protection_standard_desc">Normal withdrawal with standard confirmation.</string>
+    <string name="goal_protection_protected_desc">Requires a reason and balance impact review before withdrawal.</string>
+    <string name="goal_protection_strict_desc">Requires an explicit unlock step, reason, and impact review.</string>
+
+    <string name="goal_status_active">Active</string>
+    <string name="goal_status_completed">Completed</string>
+    <string name="goal_status_archived">Archived</string>
+
+    <string name="goal_remaining_format">%1$s left</string>
+    <string name="goal_target_of_format">%1$s of %2$s</string>
+    <string name="goal_allocate_action">Allocate</string>
+    <string name="goal_withdraw_action">Withdraw</string>
+    <string name="goal_complete_action">Mark Complete</string>
+    <string name="goal_reopen_action">Reopen Goal</string>
+    <string name="goal_archive_action">Archive</string>
+    <string name="goal_restore_action">Restore</string>
+
+    <string name="goal_wallet_distribution_title">Wallet Breakdown</string>
+    <string name="goal_no_wallet_funds">No funds allocated to this goal yet.</string>
+    <string name="goal_history_title">Allocation &amp; Withdrawal History</string>
+    <string name="goal_no_history">No allocation or withdrawal activity yet.</string>
+    <string name="goal_history_allocated">Allocated</string>
+    <string name="goal_history_withdrawn_free">Returned to Free Money</string>
+    <string name="goal_history_withdrawn_expense">Direct Expense</string>
+
+    <string name="goal_allocate_title">Allocate Funds</string>
+    <string name="goal_allocate_wallet_label">Source Wallet</string>
+    <string name="goal_allocate_available_format">Available Free Money: %1$s</string>
+    <string name="goal_allocate_amount_label">Allocation Amount</string>
+    <string name="goal_allocate_submit">Confirm Allocation</string>
+    <string name="goal_allocate_no_wallets">Create an active wallet with available Free Money first.</string>
+
+    <string name="goal_withdraw_title">Withdraw Funds</string>
+    <string name="goal_withdraw_wallet_label">From Wallet</string>
+    <string name="goal_withdraw_available_format">Allocated in wallet: %1$s</string>
+    <string name="goal_withdraw_amount_label">Withdrawal Amount</string>
+    <string name="goal_withdraw_target_label">Destination</string>
+    <string name="goal_withdraw_return_free">Return to Free Money</string>
+    <string name="goal_withdraw_direct_expense">Record as Direct Expense</string>
+    <string name="goal_withdraw_reason_label">Withdrawal Reason</string>
+    <string name="goal_withdraw_reason_optional">Withdrawal Reason (optional)</string>
+    <string name="goal_withdraw_protected_notice">This goal is protected. Reviewing your reason and remaining progress helps keep your plan intentional.</string>
+    <string name="goal_withdraw_strict_notice">Strict Protection is enabled. Review the impact below, unlock, and confirm to withdraw.</string>
+    <string name="goal_withdraw_impact_title">Financial Impact Preview</string>
+    <string name="goal_withdraw_remaining_goal_format">Remaining in goal: %1$s</string>
+    <string name="goal_withdraw_unlock_action">Unlock &amp; Review</string>
+    <string name="goal_withdraw_confirm_action">Confirm Withdrawal</string>
+    <string name="goal_withdraw_no_funds">No allocated funds available to withdraw.</string>
+
+    <string name="goal_archive_confirm_title">Archive this goal?</string>
+    <string name="goal_archive_confirm_body">Archived goals keep their history and can be restored later.</string>
+    <string name="goal_complete_confirm_title">Mark goal as completed?</string>
+    <string name="goal_complete_confirm_body">Completed goals stop new allocations unless reopened, while existing funds remain yours to withdraw anytime.</string>
+
+    <string name="goal_error_name_blank">Goal name cannot be empty.</string>
+    <string name="goal_error_target_invalid">Enter a target amount greater than 0.</string>
+    <string name="goal_error_reason_required">Please provide a reason for withdrawing from a protected goal.</string>
+    <string name="goal_error_insufficient_free">Amount exceeds the wallet\'s available Free Money.</string>
+    <string name="goal_error_insufficient_goal_wallet">Amount exceeds this goal\'s allocated funds in the selected wallet.</string>
+    <string name="goal_error_archive_allocated">Withdraw all allocated funds before archiving this goal.</string>
+    <string name="goal_error_archived_entity">Restore archived wallet or goal before continuing.</string>
+    <string name="goal_error_completed_allocate">Reopen this completed goal before adding new allocations.</string>
+    <string name="goal_error_generic">Unable to complete goal action.</string>
 </resources>

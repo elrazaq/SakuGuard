@@ -32,3 +32,7 @@
 ## TD-009: Calendar-Day Tracking Start Date & Archived Wallet Immutability
 - **Decision**: Compare `transactionDate` and `wallet.trackingStartDate` at local calendar-day granularity (`LedgerValidator.isBeforeTrackingDay`), converting Material 3 `DatePicker` UTC midnight to local start-of-day.
 - **Decision**: Reject edits or deletes on transactions involving any currently archived wallet (original or resulting), and block Phase 3 mutation usecases from modifying `GOAL_ALLOCATION` or `GOAL_WITHDRAWAL` records directly.
+
+## TD-010: Append-Only Linked Goal Ledger & Overflow-Safe Progress
+- **Decision**: Expenses created via `WithdrawFromGoalUseCase(DIRECT_EXPENSE)` cannot be edited or deleted independently through Phase 3 transaction mutation usecases; corrections use new valid operations.
+- **Decision**: `FinancialEngine.calculateGoalProgressPermille` uses `BigInteger` integer division so `Long.MAX_VALUE` targets never overflow.

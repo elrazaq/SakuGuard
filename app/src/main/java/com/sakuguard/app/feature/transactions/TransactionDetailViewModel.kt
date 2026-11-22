@@ -46,7 +46,8 @@ class TransactionDetailViewModel @Inject constructor(
         val item = feed.items.firstOrNull { it.transaction.id == transactionId }
         val editable = item != null &&
             item.transaction.type != TransactionType.GOAL_ALLOCATION &&
-            item.transaction.type != TransactionType.GOAL_WITHDRAWAL
+            item.transaction.type != TransactionType.GOAL_WITHDRAWAL &&
+            item.transaction.goalId == null
         TransactionDetailUiState(
             isLoading = false,
             item = item,

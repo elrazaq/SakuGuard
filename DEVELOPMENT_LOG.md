@@ -29,3 +29,10 @@
 - Added `ObserveTransactionsFeedUseCase`, `CategoryVisuals` (EN/ID localized default categories), `TransactionsViewModel`, `TransactionFormViewModel`, `TransactionDetailViewModel`.
 - Implemented `TransactionsScreen` (search, type/wallet/category/date filters, monthly grouping, empty states), `TransactionFormScreen` (Income/Expense/Transfer, locked type on edit, double-submit guard), `TransactionDetailScreen`, and `SakuNavHost` routes.
 - Added tests: `TransactionUseCasesPhase3Test`, `TransactionsViewModelTest`, `TransactionFormViewModelTest`, `TransactionDetailViewModelTest`.
+
+## Phase 4 — Savings Goals & Protection (2026-11-22)
+- Added `FinancialEngine.calculateGoalProgressPermille` using `BigInteger` for overflow-safe `[0, 1000]` permille progress.
+- Extended `GoalUseCases` with `UpdateGoalUseCase`, `RestoreGoalUseCase`, `UpdateGoalStatusUseCase`, `ObserveGoalsPortfolioUseCase`, `ObserveGoalDetailUseCase`, blank-name validation, `COMPLETED` allocation lock, and mandatory withdrawal `reason` for `PROTECTED`/`STRICT`.
+- Locked `DIRECT_EXPENSE` linked `EXPENSE` transactions from independent Phase 3 edit/delete in `UpdateTransactionUseCase`, `DeleteTransactionUseCase`, and `TransactionDetailViewModel`.
+- Implemented `GoalsScreen`, `GoalFormScreen`, `GoalDetailScreen`, `GoalAllocateScreen`, `GoalWithdrawScreen`, `GoalVisuals`, ViewModels, `SakuNavHost` routes, and EN/ID localization.
+- Added tests: `GoalUseCasesPhase4Test`, `GoalsViewModelTest`, `GoalFormViewModelTest`, `GoalDetailViewModelTest`, `GoalActionViewModelTest`.

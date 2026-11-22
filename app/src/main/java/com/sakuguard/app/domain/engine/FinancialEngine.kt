@@ -152,6 +152,25 @@ object FinancialEngine {
         )
     }
 
+    /**
+     * Overflow-safe integer progress in permille [0, 1000] for [target] > 0.
+     */
+    fun calculateGoalProgressPermille(
+        allocated: Long,
+        target: Long,
+    ): Int {
+        if (target <= 0L) {
+            throw com.sakuguard.app.domain.model.DomainException.InvalidAmountException("Target amount must be positive")
+        }
+        if (allocated <= 0L) return 0
+        if (allocated >= target) return 1000
+        return java.math.BigInteger.valueOf(allocated)
+            .multiply(java.math.BigInteger.valueOf(1000L))
+            .divide(java.math.BigInteger.valueOf(target))
+            .toInt()
+            .coerceIn(0, 1000)
+    }
+
     fun calculateFinancialOverview(
         wallets: List<Wallet>,
         transactions: List<Transaction>,

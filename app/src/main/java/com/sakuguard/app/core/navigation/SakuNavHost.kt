@@ -8,6 +8,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.sakuguard.app.feature.dashboard.DashboardScreen
+import com.sakuguard.app.feature.goals.GoalAllocateScreen
+import com.sakuguard.app.feature.goals.GoalDetailScreen
+import com.sakuguard.app.feature.goals.GoalFormScreen
+import com.sakuguard.app.feature.goals.GoalWithdrawScreen
 import com.sakuguard.app.feature.goals.GoalsScreen
 import com.sakuguard.app.feature.reports.ReportsScreen
 import com.sakuguard.app.feature.transactions.TransactionDetailScreen
@@ -22,6 +26,10 @@ object SakuRoutes {
     const val WALLET_FORM = "wallet_form?walletId={walletId}"
     const val TRANSACTION_DETAIL = "transaction_detail/{transactionId}"
     const val TRANSACTION_FORM = "transaction_form?transactionId={transactionId}"
+    const val GOAL_DETAIL = "goal_detail/{goalId}"
+    const val GOAL_FORM = "goal_form?goalId={goalId}"
+    const val GOAL_ALLOCATE = "goal_allocate/{goalId}"
+    const val GOAL_WITHDRAW = "goal_withdraw/{goalId}"
 
     fun walletDetail(walletId: String): String = "wallet_detail/$walletId"
     fun walletCreate(): String = "wallet_form"
@@ -30,6 +38,12 @@ object SakuRoutes {
     fun transactionDetail(transactionId: String): String = "transaction_detail/$transactionId"
     fun transactionCreate(): String = "transaction_form"
     fun transactionEdit(transactionId: String): String = "transaction_form?transactionId=$transactionId"
+
+    fun goalDetail(goalId: String): String = "goal_detail/$goalId"
+    fun goalCreate(): String = "goal_form"
+    fun goalEdit(goalId: String): String = "goal_form?goalId=$goalId"
+    fun goalAllocate(goalId: String): String = "goal_allocate/$goalId"
+    fun goalWithdraw(goalId: String): String = "goal_withdraw/$goalId"
 }
 
 @Composable
@@ -73,7 +87,56 @@ fun SakuNavHost(
                 onSaved = { navController.popBackStack() },
             )
         }
-        composable(SakuDestination.Goals.route) { GoalsScreen() }
+        composable(SakuDestination.Goals.route) {
+            GoalsScreen(
+                onCreateGoal = { navController.navigate(SakuRoutes.goalCreate()) },
+                onGoalClick = { goalId -> navController.navigate(SakuRoutes.goalDetail(goalId)) },
+            )
+        }
+        composable(
+            route = SakuRoutes.GOAL_DETAIL,
+            arguments = listOf(navArgument("goalId") { type = NavType.StringType }),
+        ) {
+            GoalDetailScreen(
+                onBack = { navController.popBackStack() },
+                onEdit = { goalId -> navController.navigate(SakuRoutes.goalEdit(goalId)) },
+                onAllocate = { goalId -> navController.navigate(SakuRoutes.goalAllocate(goalId)) },
+                onWithdraw = { goalId -> navController.navigate(SakuRoutes.goalWithdraw(goalId)) },
+            )
+        }
+        composable(
+            route = SakuRoutes.GOAL_FORM,
+            arguments = listOf(
+                navArgument("goalId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+            ),
+        ) {
+            GoalFormScreen(
+                onBack = { navController.popBackStack() },
+                onSaved = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = SakuRoutes.GOAL_ALLOCATE,
+            arguments = listOf(navArgument("goalId") { type = NavType.StringType }),
+        ) {
+            GoalAllocateScreen(
+                onBack = { navController.popBackStack() },
+                onDone = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = SakuRoutes.GOAL_WITHDRAW,
+            arguments = listOf(navArgument("goalId") { type = NavType.StringType }),
+        ) {
+            GoalWithdrawScreen(
+                onBack = { navController.popBackStack() },
+                onDone = { navController.popBackStack() },
+            )
+        }
         composable(SakuDestination.Transactions.route) {
             TransactionsScreen(
                 onCreateTransaction = { navController.navigate(SakuRoutes.transactionCreate()) },
