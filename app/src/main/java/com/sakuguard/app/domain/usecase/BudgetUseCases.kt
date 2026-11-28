@@ -11,6 +11,7 @@ import com.sakuguard.app.domain.model.DomainException
 import com.sakuguard.app.domain.repository.BudgetRepository
 import com.sakuguard.app.domain.repository.CategoryRepository
 import com.sakuguard.app.domain.repository.TransactionRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -30,11 +31,19 @@ data class BudgetsOverview(
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ObserveBudgetsUseCase @Inject constructor(
+class ObserveBudgetsUseCase(
     private val budgetRepository: BudgetRepository,
     private val categoryRepository: CategoryRepository,
     private val transactionRepository: TransactionRepository,
+    private val computeDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
+    @Inject
+    constructor(
+        budgetRepository: BudgetRepository,
+        categoryRepository: CategoryRepository,
+        transactionRepository: TransactionRepository,
+    ) : this(budgetRepository, categoryRepository, transactionRepository, Dispatchers.Default)
+
     operator fun invoke(
         zoneId: ZoneId = ZoneId.systemDefault(),
         referenceDate: LocalDate = LocalDate.now(zoneId),
@@ -74,7 +83,7 @@ class ObserveBudgetsUseCase @Inject constructor(
                 archivedBudgets = summaries.filter { it.budget.isArchived },
             )
         }
-    }.distinctUntilChanged().flowOn(Dispatchers.Default)
+    }.distinctUntilChanged().flowOn(computeDispatcher)
 }
 
 class CreateBudgetUseCase @Inject constructor(

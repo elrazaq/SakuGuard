@@ -10,6 +10,7 @@ import com.sakuguard.app.domain.repository.CategoryRepository
 import com.sakuguard.app.domain.repository.GoalRepository
 import com.sakuguard.app.domain.repository.TransactionRepository
 import com.sakuguard.app.domain.repository.WalletRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -30,11 +31,19 @@ data class TransactionsFeed(
     val categories: List<Category>,
 )
 
-class ObserveTransactionsFeedUseCase @Inject constructor(
+class ObserveTransactionsFeedUseCase(
     private val transactionRepository: TransactionRepository,
     private val walletRepository: WalletRepository,
     private val categoryRepository: CategoryRepository,
+    private val computeDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
+    @Inject
+    constructor(
+        transactionRepository: TransactionRepository,
+        walletRepository: WalletRepository,
+        categoryRepository: CategoryRepository,
+    ) : this(transactionRepository, walletRepository, categoryRepository, Dispatchers.Default)
+
     operator fun invoke(): Flow<TransactionsFeed> = combine(
         transactionRepository.observeTransactions(),
         walletRepository.observeWallets(includeArchived = true),
@@ -51,14 +60,22 @@ class ObserveTransactionsFeedUseCase @Inject constructor(
             )
         }
         TransactionsFeed(items = items, wallets = wallets, categories = categories)
-    }.distinctUntilChanged().flowOn(Dispatchers.Default)
+    }.distinctUntilChanged().flowOn(computeDispatcher)
 }
 
-class ObserveTransactionDetailUseCase @Inject constructor(
+class ObserveTransactionDetailUseCase(
     private val transactionRepository: TransactionRepository,
     private val walletRepository: WalletRepository,
     private val categoryRepository: CategoryRepository,
+    private val computeDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
+    @Inject
+    constructor(
+        transactionRepository: TransactionRepository,
+        walletRepository: WalletRepository,
+        categoryRepository: CategoryRepository,
+    ) : this(transactionRepository, walletRepository, categoryRepository, Dispatchers.Default)
+
     operator fun invoke(transactionId: String): Flow<TransactionFeedItem?> = combine(
         transactionRepository.observeTransactionById(transactionId),
         walletRepository.observeWallets(includeArchived = true),
@@ -73,7 +90,7 @@ class ObserveTransactionDetailUseCase @Inject constructor(
             destinationWallet = tx.destinationWalletId?.let { walletMap[it] },
             category = tx.categoryId?.let { categoryMap[it] },
         )
-    }.distinctUntilChanged().flowOn(Dispatchers.Default)
+    }.distinctUntilChanged().flowOn(computeDispatcher)
 }
 
 class RecordTransactionUseCase @Inject constructor(

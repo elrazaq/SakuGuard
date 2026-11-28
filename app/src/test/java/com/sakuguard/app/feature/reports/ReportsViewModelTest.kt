@@ -43,7 +43,8 @@ class ReportsViewModelTest {
                 walletRepository = store,
                 categoryRepository = store,
                 goalRepository = store,
-                observeBudgetsUseCase = ObserveBudgetsUseCase(store, store, store),
+                observeBudgetsUseCase = ObserveBudgetsUseCase(store, store, store, testDispatcher),
+                computeDispatcher = testDispatcher,
             ),
         )
     }

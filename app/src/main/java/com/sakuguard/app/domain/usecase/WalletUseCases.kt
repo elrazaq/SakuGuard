@@ -10,6 +10,7 @@ import com.sakuguard.app.domain.repository.GoalRepository
 import com.sakuguard.app.domain.repository.TransactionRepository
 import com.sakuguard.app.domain.repository.WalletLedgerTotals
 import com.sakuguard.app.domain.repository.WalletRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -33,11 +34,19 @@ data class WalletDetail(
     val goalAllocations: List<WalletGoalAllocationItem>,
 )
 
-class ObserveWalletPortfolioUseCase @Inject constructor(
+class ObserveWalletPortfolioUseCase(
     private val walletRepository: WalletRepository,
     private val transactionRepository: TransactionRepository,
     private val goalRepository: GoalRepository,
+    private val computeDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
+    @Inject
+    constructor(
+        walletRepository: WalletRepository,
+        transactionRepository: TransactionRepository,
+        goalRepository: GoalRepository,
+    ) : this(walletRepository, transactionRepository, goalRepository, Dispatchers.Default)
+
     operator fun invoke(): Flow<WalletPortfolio> = combine(
         walletRepository.observeWallets(includeArchived = true),
         transactionRepository.observeAllWalletLedgerTotals(),
@@ -59,14 +68,22 @@ class ObserveWalletPortfolioUseCase @Inject constructor(
             archivedWallets = summaries.filter { it.wallet.isArchived },
             overview = overview,
         )
-    }.distinctUntilChanged().flowOn(Dispatchers.Default)
+    }.distinctUntilChanged().flowOn(computeDispatcher)
 }
 
-class ObserveWalletDetailUseCase @Inject constructor(
+class ObserveWalletDetailUseCase(
     private val walletRepository: WalletRepository,
     private val transactionRepository: TransactionRepository,
     private val goalRepository: GoalRepository,
+    private val computeDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
+    @Inject
+    constructor(
+        walletRepository: WalletRepository,
+        transactionRepository: TransactionRepository,
+        goalRepository: GoalRepository,
+    ) : this(walletRepository, transactionRepository, goalRepository, Dispatchers.Default)
+
     operator fun invoke(walletId: String): Flow<WalletDetail?> = combine(
         walletRepository.observeWallets(includeArchived = true),
         transactionRepository.observeAllWalletLedgerTotals(),
@@ -85,7 +102,7 @@ class ObserveWalletDetailUseCase @Inject constructor(
             if (allocated > 0L) WalletGoalAllocationItem(goal = goal, allocatedAmount = allocated) else null
         }
         WalletDetail(summary = summary, goalAllocations = goalAllocations)
-    }.distinctUntilChanged().flowOn(Dispatchers.Default)
+    }.distinctUntilChanged().flowOn(computeDispatcher)
 }
 
 class CreateWalletUseCase @Inject constructor(

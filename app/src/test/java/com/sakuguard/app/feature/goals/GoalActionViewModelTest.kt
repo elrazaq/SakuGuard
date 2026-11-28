@@ -47,7 +47,7 @@ class GoalActionViewModelTest {
     fun `strict withdrawal requires reason and two-step unlock before executing`() = runTest {
         val vm = GoalActionViewModel(
             savedStateHandle = SavedStateHandle(mapOf("goalId" to "g1")),
-            observeGoalDetailUseCase = ObserveGoalDetailUseCase(store, store, store),
+            observeGoalDetailUseCase = ObserveGoalDetailUseCase(store, store, store, testDispatcher),
             categoryRepository = store,
             allocateToGoalUseCase = AllocateToGoalUseCase(store, store, store),
             withdrawFromGoalUseCase = WithdrawFromGoalUseCase(store, store, store, store),

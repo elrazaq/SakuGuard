@@ -41,7 +41,7 @@ class BudgetsViewModelTest {
         Dispatchers.setMain(testDispatcher)
         store = InMemoryLedgerStore()
         viewModel = BudgetsViewModel(
-            observeBudgetsUseCase = ObserveBudgetsUseCase(store, store, store),
+            observeBudgetsUseCase = ObserveBudgetsUseCase(store, store, store, testDispatcher),
             archiveBudgetUseCase = ArchiveBudgetUseCase(store, store),
             evaluateBudgetAlertsUseCase = EvaluateBudgetAlertsUseCase(store, store),
         )

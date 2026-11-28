@@ -11,6 +11,7 @@ import com.sakuguard.app.domain.repository.CategoryRepository
 import com.sakuguard.app.domain.repository.GoalRepository
 import com.sakuguard.app.domain.repository.TransactionRepository
 import com.sakuguard.app.domain.repository.WalletRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -38,12 +39,20 @@ data class DashboardSnapshot(
  * Observes bounded SQL aggregations and recent transactions (LIMIT 5) for the Dashboard.
  * Uses `combine` over Room Flows, converging to the latest committed state after atomic writes.
  */
-class ObserveDashboardUseCase @Inject constructor(
+class ObserveDashboardUseCase(
     private val walletRepository: WalletRepository,
     private val transactionRepository: TransactionRepository,
     private val goalRepository: GoalRepository,
     private val categoryRepository: CategoryRepository,
+    private val computeDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
+    @Inject
+    constructor(
+        walletRepository: WalletRepository,
+        transactionRepository: TransactionRepository,
+        goalRepository: GoalRepository,
+        categoryRepository: CategoryRepository,
+    ) : this(walletRepository, transactionRepository, goalRepository, categoryRepository, Dispatchers.Default)
     operator fun invoke(
         zoneId: ZoneId = ZoneId.systemDefault(),
         yearMonth: YearMonth = YearMonth.now(zoneId),
@@ -124,6 +133,6 @@ class ObserveDashboardUseCase @Inject constructor(
                 recentTransactions = recentTransactions,
                 hasAnyData = hasAnyData,
             )
-        }.distinctUntilChanged().flowOn(Dispatchers.Default)
+        }.distinctUntilChanged().flowOn(computeDispatcher)
     }
 }

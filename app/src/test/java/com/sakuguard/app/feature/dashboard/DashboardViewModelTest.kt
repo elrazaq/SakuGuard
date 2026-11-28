@@ -30,7 +30,7 @@ class DashboardViewModelTest {
         Dispatchers.setMain(testDispatcher)
         store = InMemoryLedgerStore()
         viewModel = DashboardViewModel(
-            observeDashboardUseCase = ObserveDashboardUseCase(store, store, store, store),
+            observeDashboardUseCase = ObserveDashboardUseCase(store, store, store, store, testDispatcher),
         )
     }
 

@@ -55,7 +55,7 @@ class TransactionDetailViewModelTest {
 
         val vm = TransactionDetailViewModel(
             savedStateHandle = SavedStateHandle(mapOf("transactionId" to allocTxId)),
-            observeTransactionDetailUseCase = ObserveTransactionDetailUseCase(store, store, store),
+            observeTransactionDetailUseCase = ObserveTransactionDetailUseCase(store, store, store, testDispatcher),
             deleteTransactionUseCase = DeleteTransactionUseCase(store, store, store),
         )
         val job = backgroundScope.launch { vm.uiState.collect() }
@@ -78,7 +78,7 @@ class TransactionDetailViewModelTest {
 
         val vm = TransactionDetailViewModel(
             savedStateHandle = SavedStateHandle(mapOf("transactionId" to "t1")),
-            observeTransactionDetailUseCase = ObserveTransactionDetailUseCase(store, store, store),
+            observeTransactionDetailUseCase = ObserveTransactionDetailUseCase(store, store, store, testDispatcher),
             deleteTransactionUseCase = DeleteTransactionUseCase(store, store, store),
         )
         val job = backgroundScope.launch { vm.uiState.collect() }

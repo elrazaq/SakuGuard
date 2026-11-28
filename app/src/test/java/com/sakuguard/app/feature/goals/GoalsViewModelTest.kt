@@ -35,7 +35,7 @@ class GoalsViewModelTest {
         Dispatchers.setMain(testDispatcher)
         store = InMemoryLedgerStore()
         viewModel = GoalsViewModel(
-            observeGoalsPortfolioUseCase = ObserveGoalsPortfolioUseCase(store, store, store),
+            observeGoalsPortfolioUseCase = ObserveGoalsPortfolioUseCase(store, store, store, testDispatcher),
             restoreGoalUseCase = RestoreGoalUseCase(store),
         )
     }

@@ -28,6 +28,7 @@ import com.sakuguard.app.domain.repository.MonthlyActivityTotals
 import com.sakuguard.app.domain.repository.TransactionRepository
 import com.sakuguard.app.domain.repository.WalletLedgerTotals
 import com.sakuguard.app.domain.repository.WalletRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -39,13 +40,30 @@ import java.time.YearMonth
 import java.time.ZoneId
 import javax.inject.Inject
 
-class ObserveReportsUseCase @Inject constructor(
+class ObserveReportsUseCase(
     private val transactionRepository: TransactionRepository,
     private val walletRepository: WalletRepository,
     private val categoryRepository: CategoryRepository,
     private val goalRepository: GoalRepository,
     private val observeBudgetsUseCase: ObserveBudgetsUseCase,
+    private val computeDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
+    @Inject
+    constructor(
+        transactionRepository: TransactionRepository,
+        walletRepository: WalletRepository,
+        categoryRepository: CategoryRepository,
+        goalRepository: GoalRepository,
+        observeBudgetsUseCase: ObserveBudgetsUseCase,
+    ) : this(
+        transactionRepository,
+        walletRepository,
+        categoryRepository,
+        goalRepository,
+        observeBudgetsUseCase,
+        Dispatchers.Default,
+    )
+
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     operator fun invoke(
         range: ReportPeriodRange,
@@ -213,7 +231,7 @@ class ObserveReportsUseCase @Inject constructor(
                 goalSummary = goalSummary,
                 hasAnyData = hasPeriodActivity,
             )
-        }.distinctUntilChanged().flowOn(Dispatchers.Default)
+        }.distinctUntilChanged().flowOn(computeDispatcher)
     }
 
     private fun mapBreakdown(

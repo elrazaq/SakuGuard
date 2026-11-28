@@ -32,7 +32,7 @@ class WalletsViewModelTest {
         Dispatchers.setMain(testDispatcher)
         store = InMemoryLedgerStore()
         viewModel = WalletsViewModel(
-            observeWalletPortfolioUseCase = ObserveWalletPortfolioUseCase(store, store, store),
+            observeWalletPortfolioUseCase = ObserveWalletPortfolioUseCase(store, store, store, testDispatcher),
             archiveWalletUseCase = ArchiveWalletUseCase(store, store, store),
         )
     }
