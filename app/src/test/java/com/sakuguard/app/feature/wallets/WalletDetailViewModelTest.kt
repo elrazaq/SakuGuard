@@ -50,7 +50,7 @@ class WalletDetailViewModelTest {
 
         val vm = WalletDetailViewModel(
             savedStateHandle = SavedStateHandle(mapOf("walletId" to "w1")),
-            observeWalletDetailUseCase = ObserveWalletDetailUseCase(store, store, store),
+            observeWalletDetailUseCase = ObserveWalletDetailUseCase(store, store, store, testDispatcher),
             archiveWalletUseCase = ArchiveWalletUseCase(store, store, store),
         )
         val job = backgroundScope.launch { vm.uiState.collect() }

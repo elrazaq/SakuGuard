@@ -50,7 +50,7 @@ class GoalDetailViewModelTest {
     fun `archiving goal with allocated funds surfaces error`() = runTest {
         val vm = GoalDetailViewModel(
             savedStateHandle = SavedStateHandle(mapOf("goalId" to "g1")),
-            observeGoalDetailUseCase = ObserveGoalDetailUseCase(store, store, store),
+            observeGoalDetailUseCase = ObserveGoalDetailUseCase(store, store, store, testDispatcher),
             archiveGoalUseCase = ArchiveGoalUseCase(store, store),
             restoreGoalUseCase = RestoreGoalUseCase(store),
             updateGoalStatusUseCase = UpdateGoalStatusUseCase(store),
