@@ -78,7 +78,7 @@ class TransactionDetailViewModelTest {
 
         val vm = TransactionDetailViewModel(
             savedStateHandle = SavedStateHandle(mapOf("transactionId" to "t1")),
-            observeTransactionsFeedUseCase = ObserveTransactionsFeedUseCase(store, store, store),
+            observeTransactionDetailUseCase = ObserveTransactionDetailUseCase(store, store, store),
             deleteTransactionUseCase = DeleteTransactionUseCase(store, store, store),
         )
         val job = backgroundScope.launch { vm.uiState.collect() }
