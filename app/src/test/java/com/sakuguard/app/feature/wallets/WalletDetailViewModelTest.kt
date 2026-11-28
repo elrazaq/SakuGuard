@@ -3,6 +3,8 @@ package com.sakuguard.app.feature.wallets
 import androidx.lifecycle.SavedStateHandle
 import com.google.common.truth.Truth.assertThat
 import com.sakuguard.app.R
+import com.sakuguard.app.domain.model.Category
+import com.sakuguard.app.domain.model.CategoryType
 import com.sakuguard.app.domain.model.Goal
 import com.sakuguard.app.domain.model.ProtectionMode
 import com.sakuguard.app.domain.model.Transaction
@@ -92,8 +94,9 @@ class WalletDetailViewModelTest {
     @Test
     fun `deleting wallet with transaction history is rejected with error`() = runTest {
         store.createWallet(Wallet("w_tx", "OVO", WalletType.E_WALLET, 100_000L, 100L, createdAt = 100L, updatedAt = 100L))
+        store.upsertCategory(Category("c1", "Salary", CategoryType.INCOME, "payments", 0xFF039855L, createdAt = 0L))
         RecordTransactionUseCase(store, store, store, store)(
-            Transaction("t1", TransactionType.INCOME, 50_000L, "w_tx", notes = "Topup", transactionDate = 100L, createdAt = 100L, updatedAt = 100L),
+            Transaction("t1", TransactionType.INCOME, 50_000L, "w_tx", categoryId = "c1", notes = "Topup", transactionDate = 100L, createdAt = 100L, updatedAt = 100L),
         )
         val vm = WalletDetailViewModel(
             savedStateHandle = SavedStateHandle(mapOf("walletId" to "w_tx")),
