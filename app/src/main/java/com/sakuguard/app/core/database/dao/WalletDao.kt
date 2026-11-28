@@ -33,4 +33,7 @@ interface WalletDao {
 
     @Query("UPDATE wallets SET isArchived = :archived, updatedAt = :updatedAt WHERE id = :walletId")
     suspend fun setArchived(walletId: String, archived: Boolean, updatedAt: Long)
+
+    @Query("DELETE FROM wallets WHERE id = :walletId")
+    suspend fun deleteById(walletId: String)
 }

@@ -171,3 +171,24 @@ class ArchiveWalletUseCase @Inject constructor(
         }
     }
 }
+
+class DeleteWalletUseCase @Inject constructor(
+    private val walletRepository: WalletRepository,
+    private val transactionRepository: TransactionRepository,
+    private val goalRepository: GoalRepository,
+) {
+    suspend operator fun invoke(walletId: String) {
+        transactionRepository.runInTransaction {
+            walletRepository.getWalletById(walletId)
+                ?: throw DomainException.EntityNotFoundException("Wallet not found: $walletId")
+            val txCount = transactionRepository.countTransactionsForWallet(walletId)
+            val allocCount = goalRepository.countAllocationsForWallet(walletId)
+            if (txCount > 0 || allocCount > 0) {
+                throw DomainException.InvalidTransactionMutationException(
+                    "Cannot delete wallet with existing history ($txCount txs, $allocCount allocations)",
+                )
+            }
+            walletRepository.deleteWallet(walletId)
+        }
+    }
+}

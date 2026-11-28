@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.sakuguard.app.R
 import com.sakuguard.app.domain.model.DomainException
 import com.sakuguard.app.domain.usecase.ArchiveGoalUseCase
+import com.sakuguard.app.domain.usecase.DeleteGoalUseCase
 import com.sakuguard.app.domain.usecase.GoalDetail
 import com.sakuguard.app.domain.usecase.ObserveGoalDetailUseCase
 import com.sakuguard.app.domain.usecase.RestoreGoalUseCase
@@ -23,6 +24,7 @@ import javax.inject.Inject
 data class GoalDetailUiState(
     val isLoading: Boolean = true,
     val detail: GoalDetail? = null,
+    val deletedSuccessfully: Boolean = false,
     @StringRes val errorMessageRes: Int? = null,
 )
 
@@ -33,18 +35,22 @@ class GoalDetailViewModel @Inject constructor(
     private val archiveGoalUseCase: ArchiveGoalUseCase,
     private val restoreGoalUseCase: RestoreGoalUseCase,
     private val updateGoalStatusUseCase: UpdateGoalStatusUseCase,
+    private val deleteGoalUseCase: DeleteGoalUseCase,
 ) : ViewModel() {
 
     private val goalId: String = checkNotNull(savedStateHandle["goalId"])
+    private val deletedSuccessfully = MutableStateFlow(false)
     private val errorMessageRes = MutableStateFlow<Int?>(null)
 
     val uiState: StateFlow<GoalDetailUiState> = combine(
         observeGoalDetailUseCase(goalId),
+        deletedSuccessfully,
         errorMessageRes,
-    ) { detail, errorRes ->
+    ) { detail, deleted, errorRes ->
         GoalDetailUiState(
             isLoading = false,
             detail = detail,
+            deletedSuccessfully = deleted,
             errorMessageRes = errorRes,
         )
     }.stateIn(
@@ -89,6 +95,19 @@ class GoalDetailViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 updateGoalStatusUseCase.reopen(goalId, System.currentTimeMillis())
+            } catch (_: DomainException) {
+                errorMessageRes.value = R.string.goal_error_generic
+            }
+        }
+    }
+
+    fun deleteGoal() {
+        viewModelScope.launch {
+            try {
+                deleteGoalUseCase(goalId)
+                deletedSuccessfully.value = true
+            } catch (_: DomainException.InvalidTransactionMutationException) {
+                errorMessageRes.value = R.string.goal_error_delete_has_history
             } catch (_: DomainException) {
                 errorMessageRes.value = R.string.goal_error_generic
             }

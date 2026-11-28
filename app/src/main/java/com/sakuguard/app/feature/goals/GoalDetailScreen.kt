@@ -22,6 +22,7 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Archive
 import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.NorthEast
 import androidx.compose.material.icons.outlined.Refresh
@@ -82,6 +83,13 @@ fun GoalDetailScreen(
     val errorText = uiState.errorMessageRes?.let { stringResource(it) }
     var showArchiveDialog by remember { mutableStateOf(false) }
     var showCompleteDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.deletedSuccessfully) {
+        if (uiState.deletedSuccessfully) {
+            onBack()
+        }
+    }
 
     LaunchedEffect(errorText) {
         if (errorText != null) {
@@ -105,6 +113,27 @@ fun GoalDetailScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showArchiveDialog = false }) {
+                    Text(stringResource(R.string.common_cancel))
+                }
+            },
+        )
+    }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text(stringResource(R.string.goals_delete_confirm_title)) },
+            text = { Text(stringResource(R.string.goals_delete_confirm_body)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                        viewModel.deleteGoal()
+                    },
+                ) { Text(stringResource(R.string.common_delete)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
                     Text(stringResource(R.string.common_cancel))
                 }
             },
@@ -171,6 +200,9 @@ fun GoalDetailScreen(
                             IconButton(onClick = { viewModel.restoreGoal() }) {
                                 Icon(Icons.Outlined.Restore, contentDescription = stringResource(R.string.goal_restore_action))
                             }
+                        }
+                        IconButton(onClick = { showDeleteDialog = true }) {
+                            Icon(Icons.Outlined.Delete, contentDescription = stringResource(R.string.common_delete))
                         }
                     }
                 },

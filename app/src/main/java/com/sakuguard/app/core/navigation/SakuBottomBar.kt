@@ -1,15 +1,7 @@
 package com.sakuguard.app.core.navigation
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -35,7 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -75,7 +66,7 @@ fun SakuBottomBar(
                     } else {
                         Color.Transparent
                     },
-                    animationSpec = tween(durationMillis = 220),
+                    animationSpec = tween(durationMillis = 150),
                     label = "pillColor",
                 )
                 val contentColor by animateColorAsState(
@@ -84,16 +75,8 @@ fun SakuBottomBar(
                     } else {
                         LocalSakuColors.current.textSecondary
                     },
-                    animationSpec = tween(durationMillis = 220),
+                    animationSpec = tween(durationMillis = 150),
                     label = "contentColor",
-                )
-                val iconScale by animateFloatAsState(
-                    targetValue = if (selected) 1.08f else 1.0f,
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessMedium,
-                    ),
-                    label = "iconScale",
                 )
 
                 Row(
@@ -117,33 +100,18 @@ fun SakuBottomBar(
                         imageVector = destination.icon,
                         contentDescription = label,
                         tint = contentColor,
-                        modifier = Modifier
-                            .size(22.dp)
-                            .scale(iconScale),
+                        modifier = Modifier.size(22.dp),
                     )
-                    AnimatedVisibility(
-                        visible = selected,
-                        enter = expandHorizontally(
-                            animationSpec = spring(
-                                dampingRatio = Spring.DampingRatioLowBouncy,
-                                stiffness = Spring.StiffnessMediumLow,
+                    if (selected) {
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.labelMedium.copy(
+                                fontWeight = FontWeight.SemiBold,
                             ),
-                        ) + fadeIn(animationSpec = tween(200)),
-                        exit = shrinkHorizontally(
-                            animationSpec = tween(180),
-                        ) + fadeOut(animationSpec = tween(150)),
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = label,
-                                style = MaterialTheme.typography.labelMedium.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                ),
-                                color = contentColor,
-                                maxLines = 1,
-                            )
-                        }
+                            color = contentColor,
+                            maxLines = 1,
+                        )
                     }
                 }
             }

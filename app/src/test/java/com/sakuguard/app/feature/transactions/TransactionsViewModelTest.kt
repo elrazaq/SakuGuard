@@ -7,8 +7,10 @@ import com.sakuguard.app.domain.model.Transaction
 import com.sakuguard.app.domain.model.TransactionType
 import com.sakuguard.app.domain.model.Wallet
 import com.sakuguard.app.domain.model.WalletType
+import com.sakuguard.app.domain.usecase.DeleteTransactionUseCase
 import com.sakuguard.app.domain.usecase.InMemoryLedgerStore
 import com.sakuguard.app.domain.usecase.RecordTransactionUseCase
+import com.sakuguard.app.domain.usecase.UpdateTransactionUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -138,6 +140,43 @@ class TransactionsViewModelTest {
         assertThat(viewModel.uiState.value.items).hasSize(45)
         assertThat(viewModel.uiState.value.hasMore).isFalse()
         assertThat(viewModel.uiState.value.items.map { it.transaction.id }.distinct()).hasSize(45)
+
+        job.cancel()
+    }
+
+    @Test
+    fun `auto refreshes feed on insert, edit of older transaction, and delete without touching filters`() = runTest {
+        val bank = Wallet("w1", "BCA", WalletType.BANK_ACCOUNT, 5_000_000L, 0L, createdAt = 0L, updatedAt = 0L)
+        val food = Category("c1", "Food", CategoryType.EXPENSE, "restaurant", 0xFFD97706L, createdAt = 0L)
+        store.createWallet(bank)
+        store.upsertCategory(food)
+
+        val record = RecordTransactionUseCase(store, store, store, store)
+        val update = UpdateTransactionUseCase(store, store, store, store)
+        val delete = DeleteTransactionUseCase(store, store, store)
+
+        val job = backgroundScope.launch { viewModel.uiState.collect() }
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value.items).isEmpty()
+
+        val t1 = Transaction("t1", TransactionType.EXPENSE, 25_000L, bank.id, categoryId = food.id, notes = "Lunch", transactionDate = 100L, createdAt = 100L, updatedAt = 100L)
+        val t2 = Transaction("t2", TransactionType.EXPENSE, 40_000L, bank.id, categoryId = food.id, notes = "Dinner", transactionDate = 200L, createdAt = 200L, updatedAt = 200L)
+        record(t1)
+        record(t2)
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value.items.map { it.transaction.id }).containsExactly("t2", "t1").inOrder()
+
+        // Edit older transaction t1 (not the newest row) — ledger signal must trigger reload
+        update(t1.copy(amount = 30_000L, notes = "Lunch updated", updatedAt = 300L))
+        advanceUntilIdle()
+        val updatedT1 = viewModel.uiState.value.items.first { it.transaction.id == "t1" }.transaction
+        assertThat(updatedT1.amount).isEqualTo(30_000L)
+        assertThat(updatedT1.notes).isEqualTo("Lunch updated")
+
+        // Delete t2 — ledger signal must trigger reload
+        delete("t2")
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value.items.map { it.transaction.id }).containsExactly("t1")
 
         job.cancel()
     }

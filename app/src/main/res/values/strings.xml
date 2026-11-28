@@ -372,4 +372,12 @@
     <string name="reports_chart_income_vs_expense_cd">Income versus expense bar chart across %1$d periods</string>
     <string name="reports_chart_spending_trend_cd">Spending trend line chart across %1$d periods</string>
     <string name="reports_chart_breakdown_cd">Category proportion bar across %1$d categories</string>
+
+    <!-- Post-release: Restricted Wallet & Goal Deletion -->
+    <string name="wallet_error_delete_has_history">Cannot delete a wallet that has transactions or goal allocations. Archive it instead.</string>
+    <string name="wallets_delete_confirm_title">Delete wallet?</string>
+    <string name="wallets_delete_confirm_body">This wallet has no transactions or goal allocations and will be permanently deleted.</string>
+    <string name="goal_error_delete_has_history">Cannot delete a goal that has transactions or allocations. Archive it instead.</string>
+    <string name="goals_delete_confirm_title">Delete goal?</string>
+    <string name="goals_delete_confirm_body">This goal has no transactions or allocations and will be permanently deleted.</string>
 </resources>

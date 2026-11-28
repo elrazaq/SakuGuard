@@ -82,23 +82,23 @@ class TransactionsViewModel @Inject constructor(
         combine(
             walletRepository.observeWallets(includeArchived = true),
             categoryRepository.observeCategories(includeArchived = true),
-            transactionRepository.observeRecentTransactions(limit = 1),
-        ) { wallets, categories, latestList ->
-            Triple(wallets, categories, latestList.isNotEmpty())
+            transactionRepository.observeLedgerChangeSignal(),
+        ) { wallets, categories, signal ->
+            Triple(wallets, categories, signal)
         }
             .distinctUntilChanged()
-            .onEach { (wallets, categories, hasAny) ->
-            walletsMap = wallets.associateBy { it.id }
-            categoriesMap = categories.associateBy { it.id }
-            _uiState.update {
-                it.copy(
-                    wallets = wallets,
-                    categories = categories,
-                    hasAnyTransactions = hasAny,
-                )
-            }
-            reloadFirstPage()
-        }.launchIn(viewModelScope)
+            .onEach { (wallets, categories, signal) ->
+                walletsMap = wallets.associateBy { it.id }
+                categoriesMap = categories.associateBy { it.id }
+                _uiState.update {
+                    it.copy(
+                        wallets = wallets,
+                        categories = categories,
+                        hasAnyTransactions = signal.count > 0,
+                    )
+                }
+                reloadFirstPage()
+            }.launchIn(viewModelScope)
     }
 
     fun onSearchQueryChange(query: String) {

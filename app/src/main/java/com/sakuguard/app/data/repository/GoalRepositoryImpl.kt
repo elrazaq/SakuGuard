@@ -60,4 +60,14 @@ class GoalRepositoryImpl @Inject constructor(
     override suspend fun updateStatus(goalId: String, status: GoalStatus, completedAt: Long?, updatedAt: Long) {
         goalDao.updateStatus(goalId, status, completedAt, updatedAt)
     }
+
+    override suspend fun countAllocationsForWallet(walletId: String): Int =
+        goalAllocationDao.countAllocationsForWallet(walletId)
+
+    override suspend fun countAllocationsForGoal(goalId: String): Int =
+        goalAllocationDao.countAllocationsForGoal(goalId)
+
+    override suspend fun deleteGoal(goalId: String) {
+        goalDao.deleteById(goalId)
+    }
 }

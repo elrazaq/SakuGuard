@@ -216,6 +216,26 @@ class UpdateGoalStatusUseCase @Inject constructor(
     }
 }
 
+class DeleteGoalUseCase @Inject constructor(
+    private val goalRepository: GoalRepository,
+    private val transactionRepository: TransactionRepository,
+) {
+    suspend operator fun invoke(goalId: String) {
+        transactionRepository.runInTransaction {
+            goalRepository.getGoalById(goalId)
+                ?: throw DomainException.EntityNotFoundException("Goal not found: $goalId")
+            val txCount = transactionRepository.countTransactionsForGoal(goalId)
+            val allocCount = goalRepository.countAllocationsForGoal(goalId)
+            if (txCount > 0 || allocCount > 0) {
+                throw DomainException.InvalidTransactionMutationException(
+                    "Cannot delete goal with allocation or withdrawal history ($txCount txs, $allocCount allocations)",
+                )
+            }
+            goalRepository.deleteGoal(goalId)
+        }
+    }
+}
+
 class ArchiveGoalUseCase @Inject constructor(
     private val goalRepository: GoalRepository,
     private val transactionRepository: TransactionRepository,
@@ -246,6 +266,26 @@ class RestoreGoalUseCase @Inject constructor(
             ?: throw DomainException.EntityNotFoundException("Goal not found: $goalId")
         if (goal.status != GoalStatus.ARCHIVED) return
         goalRepository.updateStatus(goalId, GoalStatus.ACTIVE, null, updatedAt)
+    }
+}
+
+class DeleteGoalUseCase @Inject constructor(
+    private val goalRepository: GoalRepository,
+    private val transactionRepository: TransactionRepository,
+) {
+    suspend operator fun invoke(goalId: String) {
+        transactionRepository.runInTransaction {
+            goalRepository.getGoalById(goalId)
+                ?: throw DomainException.EntityNotFoundException("Goal not found: $goalId")
+            val txCount = transactionRepository.countTransactionsForGoal(goalId)
+            val allocCount = goalRepository.countAllocationsForGoal(goalId)
+            if (txCount > 0 || allocCount > 0) {
+                throw DomainException.InvalidTransactionMutationException(
+                    "Cannot delete goal with allocation or withdrawal history ($txCount txs, $allocCount allocations)",
+                )
+            }
+            goalRepository.deleteGoal(goalId)
+        }
     }
 }
 

@@ -57,4 +57,10 @@ interface GoalAllocationDao {
 
     @Query("DELETE FROM goal_allocations WHERE id = :id")
     suspend fun deleteById(id: String)
+
+    @Query("SELECT COUNT(*) FROM goal_allocations WHERE walletId = :walletId")
+    suspend fun countAllocationsForWallet(walletId: String): Int
+
+    @Query("SELECT COUNT(*) FROM goal_allocations WHERE goalId = :goalId")
+    suspend fun countAllocationsForGoal(goalId: String): Int
 }

@@ -10,4 +10,5 @@ interface WalletRepository {
     suspend fun createWallet(wallet: Wallet)
     suspend fun updateWallet(wallet: Wallet)
     suspend fun setArchived(walletId: String, archived: Boolean, updatedAt: Long)
+    suspend fun deleteWallet(walletId: String)
 }

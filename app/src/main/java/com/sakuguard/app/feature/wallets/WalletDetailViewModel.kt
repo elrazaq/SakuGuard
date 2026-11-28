@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.sakuguard.app.R
 import com.sakuguard.app.domain.model.DomainException
 import com.sakuguard.app.domain.usecase.ArchiveWalletUseCase
+import com.sakuguard.app.domain.usecase.DeleteWalletUseCase
 import com.sakuguard.app.domain.usecase.ObserveWalletDetailUseCase
 import com.sakuguard.app.domain.usecase.WalletDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +22,7 @@ import javax.inject.Inject
 data class WalletDetailUiState(
     val isLoading: Boolean = true,
     val detail: WalletDetail? = null,
+    val deletedSuccessfully: Boolean = false,
     @StringRes val errorMessageRes: Int? = null,
 )
 
@@ -29,18 +31,22 @@ class WalletDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     observeWalletDetailUseCase: ObserveWalletDetailUseCase,
     private val archiveWalletUseCase: ArchiveWalletUseCase,
+    private val deleteWalletUseCase: DeleteWalletUseCase,
 ) : ViewModel() {
 
     private val walletId: String = checkNotNull(savedStateHandle["walletId"])
+    private val deletedSuccessfully = MutableStateFlow(false)
     private val errorMessageRes = MutableStateFlow<Int?>(null)
 
     val uiState: StateFlow<WalletDetailUiState> = combine(
         observeWalletDetailUseCase(walletId),
+        deletedSuccessfully,
         errorMessageRes,
-    ) { detail, errorRes ->
+    ) { detail, deleted, errorRes ->
         WalletDetailUiState(
             isLoading = false,
             detail = detail,
+            deletedSuccessfully = deleted,
             errorMessageRes = errorRes,
         )
     }.stateIn(
@@ -59,6 +65,19 @@ class WalletDetailViewModel @Inject constructor(
                 )
             } catch (_: DomainException.InsufficientGoalAllocationException) {
                 errorMessageRes.value = R.string.wallet_error_archive_allocated
+            } catch (_: DomainException) {
+                errorMessageRes.value = R.string.wallet_error_generic
+            }
+        }
+    }
+
+    fun deleteWallet() {
+        viewModelScope.launch {
+            try {
+                deleteWalletUseCase(walletId)
+                deletedSuccessfully.value = true
+            } catch (_: DomainException.InvalidTransactionMutationException) {
+                errorMessageRes.value = R.string.wallet_error_delete_has_history
             } catch (_: DomainException) {
                 errorMessageRes.value = R.string.wallet_error_generic
             }

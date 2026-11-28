@@ -62,3 +62,8 @@
 ## TD-017: Background Flow Offloading & Bounded Portfolio/Detail Observation
 - **Decision**: All reactive `combine` UseCases (`Dashboard`, `Wallets`, `Goals`, `Budgets`, `Reports`, `TransactionDetail`) apply `.distinctUntilChanged().flowOn(Dispatchers.Default)` so `FinancialEngine` and mapping work never run on `Dispatchers.Main.immediate`.
 - **Decision**: Replace `observeTransactions()` in `Wallets`, `Goals`, and `TransactionDetail` with `observeAllWalletLedgerTotals()` (`*FromTotals` engine methods) and `observeTransactionById(id)`. Cache `DecimalFormat` per thread (`ThreadLocal`) and `DateTimeFormatter` per `Locale`.
+
+## TD-018: Ledger Change Signal & Restricted Hard Deletion (No Schema Migration)
+- **Decision**: Drive `TransactionsViewModel` reactive reloads using a single bounded SQL aggregate `observeLedgerChangeSignal()` (`COUNT(*)`, `COALESCE(MAX(updatedAt), 0)`, `COALESCE(SUM(amount), 0)`) rather than `observeRecentTransactions(limit = 1)`, so edits to older transactions and deletes trigger reload immediately.
+- **Decision**: Keep `Wallet` and `Goal` archive-first for any record with financial history (`transactions` or `goal_allocations`), permitting hard deletion (`DeleteWalletUseCase`, `DeleteGoalUseCase` inside `runInTransaction`) strictly when both counts equal `0`.
+- **Decision**: Use lightweight `tween(180)` cross-fade transitions in `SakuNavHost` and remove per-frame `expandHorizontally` / `spring` animations in `SakuBottomBar` to eliminate bottom-bar relayout jank.

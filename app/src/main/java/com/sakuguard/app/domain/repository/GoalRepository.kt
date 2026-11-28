@@ -22,4 +22,7 @@ interface GoalRepository {
     suspend fun updateGoal(goal: Goal)
     suspend fun updateProtectionMode(goalId: String, mode: ProtectionMode, updatedAt: Long)
     suspend fun updateStatus(goalId: String, status: GoalStatus, completedAt: Long?, updatedAt: Long)
+    suspend fun countAllocationsForWallet(walletId: String): Int
+    suspend fun countAllocationsForGoal(goalId: String): Int
+    suspend fun deleteGoal(goalId: String)
 }

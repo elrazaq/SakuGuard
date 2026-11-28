@@ -372,4 +372,12 @@
     <string name="reports_chart_income_vs_expense_cd">Grafik batang pemasukan vs pengeluaran untuk %1$d periode</string>
     <string name="reports_chart_spending_trend_cd">Grafik garis tren pengeluaran untuk %1$d periode</string>
     <string name="reports_chart_breakdown_cd">Batang proporsi kategori untuk %1$d kategori</string>
+
+    <!-- Post-release: Restricted Wallet & Goal Deletion -->
+    <string name="wallet_error_delete_has_history">Dompet yang memiliki transaksi atau alokasi target tidak dapat dihapus. Arsipkan saja.</string>
+    <string name="wallets_delete_confirm_title">Hapus dompet?</string>
+    <string name="wallets_delete_confirm_body">Dompet ini tidak memiliki transaksi atau alokasi target dan akan dihapus permanen.</string>
+    <string name="goal_error_delete_has_history">Target yang memiliki transaksi atau alokasi tidak dapat dihapus. Arsipkan saja.</string>
+    <string name="goals_delete_confirm_title">Hapus target?</string>
+    <string name="goals_delete_confirm_body">Target ini tidak memiliki transaksi atau alokasi dan akan dihapus permanen.</string>
 </resources>

@@ -19,6 +19,7 @@ import com.sakuguard.app.domain.repository.CategoryRepository
 import com.sakuguard.app.domain.repository.CategoryTotal
 import com.sakuguard.app.domain.repository.GoalPeriodContributionTotals
 import com.sakuguard.app.domain.repository.GoalRepository
+import com.sakuguard.app.domain.repository.LedgerChangeSignal
 import com.sakuguard.app.domain.repository.MonthlyActivityTotals
 import com.sakuguard.app.domain.repository.TransactionPageQuery
 import com.sakuguard.app.domain.repository.TransactionRepository
@@ -57,6 +58,9 @@ class InMemoryLedgerStore :
     override suspend fun updateWallet(wallet: Wallet) { wallets.value = wallets.value.map { if (it.id == wallet.id) wallet else it } }
     override suspend fun setArchived(walletId: String, archived: Boolean, updatedAt: Long) {
         wallets.value = wallets.value.map { if (it.id == walletId) it.copy(isArchived = archived, updatedAt = updatedAt) else it }
+    }
+    override suspend fun deleteWallet(walletId: String) {
+        wallets.value = wallets.value.filterNot { it.id == walletId }
     }
 
     override fun observeCategories(includeArchived: Boolean): Flow<List<Category>> =
@@ -101,6 +105,13 @@ class InMemoryLedgerStore :
     }
     override suspend fun updateStatus(goalId: String, status: GoalStatus, completedAt: Long?, updatedAt: Long) {
         goals.value = goals.value.map { if (it.id == goalId) it.copy(status = status, completedAt = completedAt, updatedAt = updatedAt) else it }
+    }
+    override suspend fun countAllocationsForWallet(walletId: String): Int =
+        allocations.value.count { it.walletId == walletId }
+    override suspend fun countAllocationsForGoal(goalId: String): Int =
+        allocations.value.count { it.goalId == goalId }
+    override suspend fun deleteGoal(goalId: String) {
+        goals.value = goals.value.filterNot { it.id == goalId }
     }
 
     override fun observeTransactions(): Flow<List<Transaction>> = transactions
@@ -176,6 +187,18 @@ class InMemoryLedgerStore :
     override suspend fun getTransactionById(id: String): Transaction? = transactions.value.firstOrNull { it.id == id }
     override fun observeTransactionById(id: String): Flow<Transaction?> =
         transactions.map { list -> list.firstOrNull { it.id == id } }
+    override fun observeLedgerChangeSignal(): Flow<LedgerChangeSignal> =
+        transactions.map { list ->
+            LedgerChangeSignal(
+                count = list.size,
+                maxUpdatedAt = list.maxOfOrNull { it.updatedAt } ?: 0L,
+                amountSum = list.sumOf { it.amount },
+            )
+        }
+    override suspend fun countTransactionsForWallet(walletId: String): Int =
+        transactions.value.count { it.walletId == walletId || it.destinationWalletId == walletId }
+    override suspend fun countTransactionsForGoal(goalId: String): Int =
+        transactions.value.count { it.goalId == goalId }
     override suspend fun getEarliestTransactionDateForWallet(walletId: String): Long? =
         transactions.value
             .filter { it.walletId == walletId || it.destinationWalletId == walletId }

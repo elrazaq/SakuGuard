@@ -32,6 +32,12 @@ data class CategoryTotalTuple(
     val totalAmount: Long,
 )
 
+data class LedgerChangeSignalTuple(
+    val count: Int,
+    val maxUpdatedAt: Long,
+    val amountSum: Long,
+)
+
 @Dao
 interface TransactionDao {
     @Query("SELECT * FROM transactions ORDER BY transactionDate DESC, createdAt DESC, id DESC")
@@ -48,6 +54,17 @@ interface TransactionDao {
 
     @Query("SELECT * FROM transactions WHERE id = :id LIMIT 1")
     fun observeTransactionById(id: String): Flow<TransactionEntity?>
+
+    @Query(
+        "SELECT COUNT(*) AS count, COALESCE(MAX(updatedAt), 0) AS maxUpdatedAt, COALESCE(SUM(amount), 0) AS amountSum FROM transactions",
+    )
+    fun observeLedgerChangeSignal(): Flow<LedgerChangeSignalTuple>
+
+    @Query("SELECT COUNT(*) FROM transactions WHERE walletId = :walletId OR destinationWalletId = :walletId")
+    suspend fun countTransactionsForWallet(walletId: String): Int
+
+    @Query("SELECT COUNT(*) FROM transactions WHERE goalId = :goalId")
+    suspend fun countTransactionsForGoal(goalId: String): Int
 
     @Query("SELECT MIN(transactionDate) FROM transactions WHERE walletId = :walletId OR destinationWalletId = :walletId")
     suspend fun getEarliestTransactionDateForWallet(walletId: String): Long?

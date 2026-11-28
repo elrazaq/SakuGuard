@@ -32,4 +32,8 @@ class WalletRepositoryImpl @Inject constructor(
     override suspend fun setArchived(walletId: String, archived: Boolean, updatedAt: Long) {
         walletDao.setArchived(walletId, archived, updatedAt)
     }
+
+    override suspend fun deleteWallet(walletId: String) {
+        walletDao.deleteById(walletId)
+    }
 }

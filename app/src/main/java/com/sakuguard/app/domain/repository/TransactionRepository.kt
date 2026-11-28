@@ -12,6 +12,12 @@ data class CategoryTotal(
     val totalAmount: Long,
 )
 
+data class LedgerChangeSignal(
+    val count: Int,
+    val maxUpdatedAt: Long,
+    val amountSum: Long,
+)
+
 data class WalletLedgerTotals(
     val walletId: String,
     val incomeSum: Long,
@@ -62,6 +68,9 @@ interface TransactionRepository {
     suspend fun getAllTransactions(): List<Transaction>
     suspend fun getTransactionById(id: String): Transaction?
     fun observeTransactionById(id: String): Flow<Transaction?>
+    fun observeLedgerChangeSignal(): Flow<LedgerChangeSignal>
+    suspend fun countTransactionsForWallet(walletId: String): Int
+    suspend fun countTransactionsForGoal(goalId: String): Int
     suspend fun getEarliestTransactionDateForWallet(walletId: String): Long?
     suspend fun getWalletLedgerTotals(walletId: String): WalletLedgerTotals
     suspend fun getExpenseSumForCategoryPeriod(

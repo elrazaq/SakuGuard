@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Archive
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Restore
@@ -70,6 +71,13 @@ fun WalletDetailScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val errorText = uiState.errorMessageRes?.let { stringResource(it) }
     var showArchiveConfirm by remember { mutableStateOf(false) }
+    var showDeleteConfirm by remember { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.deletedSuccessfully) {
+        if (uiState.deletedSuccessfully) {
+            onBack()
+        }
+    }
 
     LaunchedEffect(errorText) {
         if (errorText != null) {
@@ -118,6 +126,29 @@ fun WalletDetailScreen(
         )
     }
 
+    if (showDeleteConfirm && detail != null) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirm = false },
+            title = { Text(stringResource(R.string.wallets_delete_confirm_title)) },
+            text = { Text(stringResource(R.string.wallets_delete_confirm_body)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteConfirm = false
+                        viewModel.deleteWallet()
+                    },
+                ) {
+                    Text(stringResource(R.string.common_delete))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirm = false }) {
+                    Text(stringResource(R.string.common_cancel))
+                }
+            },
+        )
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -154,6 +185,12 @@ fun WalletDetailScreen(
                                         R.string.wallets_archive_action
                                     },
                                 ),
+                            )
+                        }
+                        IconButton(onClick = { showDeleteConfirm = true }) {
+                            Icon(
+                                imageVector = Icons.Outlined.Delete,
+                                contentDescription = stringResource(R.string.common_delete),
                             )
                         }
                     }

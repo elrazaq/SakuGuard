@@ -12,6 +12,7 @@ import com.sakuguard.app.domain.model.ReportTimeBucket
 import com.sakuguard.app.domain.model.Transaction
 import com.sakuguard.app.domain.model.TransactionType
 import com.sakuguard.app.domain.repository.CategoryTotal
+import com.sakuguard.app.domain.repository.LedgerChangeSignal
 import com.sakuguard.app.domain.repository.MonthlyActivityTotals
 import com.sakuguard.app.domain.repository.TransactionPageQuery
 import com.sakuguard.app.domain.repository.TransactionRepository
@@ -100,6 +101,17 @@ class TransactionRepositoryImpl @Inject constructor(
 
     override fun observeTransactionById(id: String): Flow<Transaction?> =
         transactionDao.observeTransactionById(id).map { it?.toDomain() }
+
+    override fun observeLedgerChangeSignal(): Flow<LedgerChangeSignal> =
+        transactionDao.observeLedgerChangeSignal().map {
+            LedgerChangeSignal(count = it.count, maxUpdatedAt = it.maxUpdatedAt, amountSum = it.amountSum)
+        }
+
+    override suspend fun countTransactionsForWallet(walletId: String): Int =
+        transactionDao.countTransactionsForWallet(walletId)
+
+    override suspend fun countTransactionsForGoal(goalId: String): Int =
+        transactionDao.countTransactionsForGoal(goalId)
 
     override suspend fun getEarliestTransactionDateForWallet(walletId: String): Long? =
         transactionDao.getEarliestTransactionDateForWallet(walletId)

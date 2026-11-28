@@ -1,5 +1,8 @@
 package com.sakuguard.app.core.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -86,6 +89,10 @@ fun SakuNavHost(
         navController = navController,
         startDestination = SakuDestination.Home.route,
         modifier = modifier,
+        enterTransition = { fadeIn(animationSpec = tween(180)) },
+        exitTransition = { fadeOut(animationSpec = tween(180)) },
+        popEnterTransition = { fadeIn(animationSpec = tween(180)) },
+        popExitTransition = { fadeOut(animationSpec = tween(180)) },
     ) {
         composable(SakuDestination.Home.route) {
             DashboardScreen(
