@@ -98,6 +98,12 @@ class TransactionRepositoryImpl @Inject constructor(
     override suspend fun getTransactionById(id: String): Transaction? =
         transactionDao.getTransactionById(id)?.toDomain()
 
+    override fun observeTransactionById(id: String): Flow<Transaction?> =
+        transactionDao.observeTransactionById(id).map { it?.toDomain() }
+
+    override suspend fun getEarliestTransactionDateForWallet(walletId: String): Long? =
+        transactionDao.getEarliestTransactionDateForWallet(walletId)
+
     override suspend fun getWalletLedgerTotals(walletId: String): WalletLedgerTotals {
         val tuple = transactionDao.getWalletLedgerTotals(walletId)
         return WalletLedgerTotals(

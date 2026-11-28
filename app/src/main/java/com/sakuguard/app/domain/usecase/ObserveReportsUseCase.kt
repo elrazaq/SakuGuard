@@ -28,9 +28,11 @@ import com.sakuguard.app.domain.repository.MonthlyActivityTotals
 import com.sakuguard.app.domain.repository.TransactionRepository
 import com.sakuguard.app.domain.repository.WalletLedgerTotals
 import com.sakuguard.app.domain.repository.WalletRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
 import java.time.LocalDate
 import java.time.YearMonth
@@ -211,7 +213,7 @@ class ObserveReportsUseCase @Inject constructor(
                 goalSummary = goalSummary,
                 hasAnyData = hasPeriodActivity,
             )
-        }.distinctUntilChanged()
+        }.distinctUntilChanged().flowOn(Dispatchers.Default)
     }
 
     private fun mapBreakdown(

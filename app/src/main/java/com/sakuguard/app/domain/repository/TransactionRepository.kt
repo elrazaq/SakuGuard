@@ -61,6 +61,8 @@ interface TransactionRepository {
 
     suspend fun getAllTransactions(): List<Transaction>
     suspend fun getTransactionById(id: String): Transaction?
+    fun observeTransactionById(id: String): Flow<Transaction?>
+    suspend fun getEarliestTransactionDateForWallet(walletId: String): Long?
     suspend fun getWalletLedgerTotals(walletId: String): WalletLedgerTotals
     suspend fun getExpenseSumForCategoryPeriod(
         categoryId: String,

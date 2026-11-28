@@ -11,12 +11,14 @@ import com.sakuguard.app.domain.model.DomainException
 import com.sakuguard.app.domain.repository.BudgetRepository
 import com.sakuguard.app.domain.repository.CategoryRepository
 import com.sakuguard.app.domain.repository.TransactionRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import java.time.ZoneId
@@ -72,7 +74,7 @@ class ObserveBudgetsUseCase @Inject constructor(
                 archivedBudgets = summaries.filter { it.budget.isArchived },
             )
         }
-    }.distinctUntilChanged()
+    }.distinctUntilChanged().flowOn(Dispatchers.Default)
 }
 
 class CreateBudgetUseCase @Inject constructor(

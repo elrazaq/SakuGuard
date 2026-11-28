@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -78,19 +79,21 @@ private fun SakuGuardRoot() {
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth(),
                 ) {
+                    val bg = MaterialTheme.colorScheme.background
+                    val fadeBrush = remember(bg) {
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                bg.copy(alpha = 0.88f),
+                                bg,
+                            ),
+                        )
+                    }
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(36.dp)
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.Transparent,
-                                        MaterialTheme.colorScheme.background.copy(alpha = 0.88f),
-                                        MaterialTheme.colorScheme.background,
-                                    ),
-                                ),
-                            ),
+                            .background(fadeBrush),
                     )
                     SakuBottomBar(
                         currentRoute = currentDestination?.route,

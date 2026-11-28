@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -180,53 +181,53 @@ internal fun SpendingTrendLineChart(
         verticalArrangement = Arrangement.spacedBy(SakuSpacing.xs),
     ) {
         val trendCd = stringResource(R.string.reports_chart_spending_trend_cd, buckets.size)
-        Canvas(
+        val fillColor = sakuColors.expense.copy(alpha = 0.14f)
+        val strokeStyle = remember { Stroke(width = 4f, cap = StrokeCap.Round) }
+        androidx.compose.foundation.layout.Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(110.dp)
-                .semantics { contentDescription = trendCd },
-        ) {
-            val w = size.width
-            val h = size.height
-            val padY = 10f
-            val usableH = (h - padY * 2f).coerceAtLeast(1f)
-            val stepX = w / (buckets.size - 1).coerceAtLeast(1).toFloat()
+                .semantics { contentDescription = trendCd }
+                .drawWithCache {
+                    val w = size.width
+                    val h = size.height
+                    val padY = 10f
+                    val usableH = (h - padY * 2f).coerceAtLeast(1f)
+                    val stepX = w / (buckets.size - 1).coerceAtLeast(1).toFloat()
 
-            for (i in 1..2) {
-                val y = h * (i / 3f)
-                drawLine(color = gridColor, start = Offset(0f, y), end = Offset(w, y), strokeWidth = 1f)
-            }
+                    val points = buckets.mapIndexed { idx, bucket ->
+                        val x = idx * stepX
+                        val ratio = (bucket.expense.toDouble() / maxVal.toDouble()).toFloat()
+                        val y = h - padY - ratio * usableH
+                        Offset(x, y)
+                    }
 
-            val points = buckets.mapIndexed { idx, bucket ->
-                val x = idx * stepX
-                val ratio = (bucket.expense.toDouble() / maxVal.toDouble()).toFloat()
-                val y = h - padY - ratio * usableH
-                Offset(x, y)
-            }
+                    val fillPath = Path().apply {
+                        moveTo(points.first().x, h)
+                        points.forEach { lineTo(it.x, it.y) }
+                        lineTo(points.last().x, h)
+                        close()
+                    }
+                    val linePath = Path().apply {
+                        moveTo(points.first().x, points.first().y)
+                        for (i in 1 until points.size) {
+                            lineTo(points[i].x, points[i].y)
+                        }
+                    }
 
-            val fillPath = Path().apply {
-                moveTo(points.first().x, h)
-                points.forEach { lineTo(it.x, it.y) }
-                lineTo(points.last().x, h)
-                close()
-            }
-            drawPath(path = fillPath, color = sakuColors.expense.copy(alpha = 0.14f))
-
-            val linePath = Path().apply {
-                moveTo(points.first().x, points.first().y)
-                for (i in 1 until points.size) {
-                    lineTo(points[i].x, points[i].y)
-                }
-            }
-            drawPath(
-                path = linePath,
-                color = sakuColors.expense,
-                style = Stroke(width = 4f, cap = StrokeCap.Round),
-            )
-            points.forEach { pt ->
-                drawCircle(color = sakuColors.expense, radius = 6f, center = pt)
-            }
-        }
+                    onDrawBehind {
+                        for (i in 1..2) {
+                            val y = h * (i / 3f)
+                            drawLine(color = gridColor, start = Offset(0f, y), end = Offset(w, y), strokeWidth = 1f)
+                        }
+                        drawPath(path = fillPath, color = fillColor)
+                        drawPath(path = linePath, color = sakuColors.expense, style = strokeStyle)
+                        points.forEach { pt ->
+                            drawCircle(color = sakuColors.expense, radius = 6f, center = pt)
+                        }
+                    }
+                },
+        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),

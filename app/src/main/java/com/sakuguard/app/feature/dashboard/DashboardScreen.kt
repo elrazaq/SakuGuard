@@ -44,6 +44,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -89,8 +90,8 @@ fun DashboardScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val masked = stringResource(R.string.dashboard_masked_amount)
-    val formatMoney: (Long) -> String = { amount ->
-        if (uiState.amountsHidden) masked else CurrencyFormatter.formatIdr(amount)
+    val formatMoney: (Long) -> String = remember(uiState.amountsHidden, masked) {
+        { amount -> if (uiState.amountsHidden) masked else CurrencyFormatter.formatIdr(amount) }
     }
 
     Scaffold(
@@ -170,7 +171,7 @@ fun DashboardScreen(
                     ),
                     verticalArrangement = Arrangement.spacedBy(SakuSpacing.md),
                 ) {
-                    item {
+                    item(key = "hero-balance") {
                         SakuHeroBalanceCard(
                             title = stringResource(R.string.wallets_total_assets),
                             amountText = formatMoney(snapshot.overview.totalAssets),
@@ -197,7 +198,7 @@ fun DashboardScreen(
                         )
                     }
 
-                    item {
+                    item(key = "kpi-assets") {
                         SakuKpiPairCard(
                             leftLabel = stringResource(R.string.wallets_free_money),
                             leftAmount = formatMoney(snapshot.overview.freeMoney),
@@ -212,7 +213,7 @@ fun DashboardScreen(
                         )
                     }
 
-                    item {
+                    item(key = "monthly-hdr") {
                         Text(
                             text = stringResource(R.string.dashboard_monthly_title),
                             style = MaterialTheme.typography.titleMedium,
@@ -220,7 +221,7 @@ fun DashboardScreen(
                         )
                     }
 
-                    item {
+                    item(key = "monthly-cards") {
                         Column(verticalArrangement = Arrangement.spacedBy(SakuSpacing.sm)) {
                             SakuKpiPairCard(
                                 leftLabel = stringResource(R.string.dashboard_monthly_income),
@@ -263,7 +264,7 @@ fun DashboardScreen(
                     }
 
                     // Wallets Section
-                    item {
+                    item(key = "wallets-hdr") {
                         SectionHeader(
                             title = stringResource(R.string.wallets_active_section),
                             onViewAll = onOpenWallets,
@@ -271,7 +272,7 @@ fun DashboardScreen(
                     }
 
                     if (snapshot.activeWallets.isEmpty()) {
-                        item {
+                        item(key = "wallets-empty") {
                             SectionEmptyCard(
                                 message = stringResource(R.string.dashboard_no_active_wallets),
                                 actionLabel = stringResource(R.string.wallets_add_button),
@@ -289,7 +290,7 @@ fun DashboardScreen(
                     }
 
                     // Goals Section
-                    item {
+                    item(key = "goals-hdr") {
                         SectionHeader(
                             title = stringResource(R.string.goals_active_section),
                             onViewAll = onOpenGoals,
@@ -297,7 +298,7 @@ fun DashboardScreen(
                     }
 
                     if (snapshot.activeGoals.isEmpty()) {
-                        item {
+                        item(key = "goals-empty") {
                             SectionEmptyCard(
                                 message = stringResource(R.string.dashboard_no_active_goals),
                                 actionLabel = stringResource(R.string.goals_add_button),
@@ -315,7 +316,7 @@ fun DashboardScreen(
                     }
 
                     // Recent Transactions Section
-                    item {
+                    item(key = "tx-hdr") {
                         SectionHeader(
                             title = stringResource(R.string.dashboard_recent_transactions),
                             onViewAll = onOpenTransactions,
@@ -323,7 +324,7 @@ fun DashboardScreen(
                     }
 
                     if (snapshot.recentTransactions.isEmpty()) {
-                        item {
+                        item(key = "tx-empty") {
                             SectionEmptyCard(
                                 message = stringResource(R.string.dashboard_no_recent_tx),
                                 actionLabel = stringResource(R.string.tx_add_button),

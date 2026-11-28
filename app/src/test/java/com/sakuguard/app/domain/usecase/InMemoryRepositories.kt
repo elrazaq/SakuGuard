@@ -174,6 +174,12 @@ class InMemoryLedgerStore :
 
     override suspend fun getAllTransactions(): List<Transaction> = transactions.value
     override suspend fun getTransactionById(id: String): Transaction? = transactions.value.firstOrNull { it.id == id }
+    override fun observeTransactionById(id: String): Flow<Transaction?> =
+        transactions.map { list -> list.firstOrNull { it.id == id } }
+    override suspend fun getEarliestTransactionDateForWallet(walletId: String): Long? =
+        transactions.value
+            .filter { it.walletId == walletId || it.destinationWalletId == walletId }
+            .minOfOrNull { it.transactionDate }
     override suspend fun getWalletLedgerTotals(walletId: String): WalletLedgerTotals =
         computeTotalsForWallet(walletId, transactions.value)
 

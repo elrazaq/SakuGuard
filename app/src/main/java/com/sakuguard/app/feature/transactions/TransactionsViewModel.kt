@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -84,7 +85,9 @@ class TransactionsViewModel @Inject constructor(
             transactionRepository.observeRecentTransactions(limit = 1),
         ) { wallets, categories, latestList ->
             Triple(wallets, categories, latestList.isNotEmpty())
-        }.onEach { (wallets, categories, hasAny) ->
+        }
+            .distinctUntilChanged()
+            .onEach { (wallets, categories, hasAny) ->
             walletsMap = wallets.associateBy { it.id }
             categoriesMap = categories.associateBy { it.id }
             _uiState.update {

@@ -11,8 +11,11 @@ import com.sakuguard.app.domain.repository.CategoryRepository
 import com.sakuguard.app.domain.repository.GoalRepository
 import com.sakuguard.app.domain.repository.TransactionRepository
 import com.sakuguard.app.domain.repository.WalletRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
 import java.time.YearMonth
 import java.time.ZoneId
 import javax.inject.Inject
@@ -121,6 +124,6 @@ class ObserveDashboardUseCase @Inject constructor(
                 recentTransactions = recentTransactions,
                 hasAnyData = hasAnyData,
             )
-        }
+        }.distinctUntilChanged().flowOn(Dispatchers.Default)
     }
 }

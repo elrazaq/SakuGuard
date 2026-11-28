@@ -70,3 +70,8 @@
 - Added TalkBack `contentDescription` strings (`common_back`, `common_dismiss`) on all remaining `IconButton`s and `Modifier.semantics` summaries on `ReportCharts` (`Canvas` charts) in EN and ID.
 - Added `res/values-night/themes.xml` and light/dark `android:windowBackground` in `themes.xml` to eliminate dark-mode cold-start white flash.
 - Enabled `WindowManager.LayoutParams.FLAG_SECURE` in `!BuildConfig.DEBUG` (`MainActivity`), bumped `versionName = "1.0.0"` (`versionCode = 1`), added optional `keystore.properties` / env-var release signing hook, added `assembleRelease` & `bundleRelease` (R8) to `.github/workflows/android.yml`, and created `RELEASE_CHECKLIST.md`.
+
+## Post-Release Performance Optimization (2026-11-28)
+- Eliminated remaining full-table `observeTransactions()` / `getAllTransactions()` reads in `ObserveWalletPortfolioUseCase`, `ObserveWalletDetailUseCase`, `UpdateWalletUseCase` (`getEarliestTransactionDateForWallet`), `ObserveGoalsPortfolioUseCase`, `ObserveGoalDetailUseCase`, and `TransactionDetailViewModel` (`ObserveTransactionDetailUseCase` / `observeTransactionById`).
+- Offloaded `combine` calculations in all reactive UseCases (`Dashboard`, `Wallets`, `Goals`, `Budgets`, `Reports`, `TransactionDetail`) to `Dispatchers.Default` via `.flowOn(Dispatchers.Default)`.
+- Cached `DecimalFormat` (`ThreadLocal`) in `CurrencyFormatter`, `DateTimeFormatter` (`ConcurrentHashMap`) in `DateFormatter`, `Path` via `drawWithCache` in `SpendingTrendLineChart`, `formatMoney` & static `LazyColumn` keys in `DashboardScreen`, and `fadeBrush` in `MainActivity`.

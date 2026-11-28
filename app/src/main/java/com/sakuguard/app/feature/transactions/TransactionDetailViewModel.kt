@@ -8,7 +8,7 @@ import com.sakuguard.app.R
 import com.sakuguard.app.domain.model.DomainException
 import com.sakuguard.app.domain.model.TransactionType
 import com.sakuguard.app.domain.usecase.DeleteTransactionUseCase
-import com.sakuguard.app.domain.usecase.ObserveTransactionsFeedUseCase
+import com.sakuguard.app.domain.usecase.ObserveTransactionDetailUseCase
 import com.sakuguard.app.domain.usecase.TransactionFeedItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,7 +30,7 @@ data class TransactionDetailUiState(
 @HiltViewModel
 class TransactionDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    observeTransactionsFeedUseCase: ObserveTransactionsFeedUseCase,
+    observeTransactionDetailUseCase: ObserveTransactionDetailUseCase,
     private val deleteTransactionUseCase: DeleteTransactionUseCase,
 ) : ViewModel() {
 
@@ -39,11 +39,10 @@ class TransactionDetailViewModel @Inject constructor(
     private val errorMessageRes = MutableStateFlow<Int?>(null)
 
     val uiState: StateFlow<TransactionDetailUiState> = combine(
-        observeTransactionsFeedUseCase(),
+        observeTransactionDetailUseCase(transactionId),
         deletedSuccessfully,
         errorMessageRes,
-    ) { feed, deleted, errorRes ->
-        val item = feed.items.firstOrNull { it.transaction.id == transactionId }
+    ) { item, deleted, errorRes ->
         val editable = item != null &&
             item.transaction.type != TransactionType.GOAL_ALLOCATION &&
             item.transaction.type != TransactionType.GOAL_WITHDRAWAL &&

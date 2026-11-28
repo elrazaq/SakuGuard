@@ -7,11 +7,15 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Deterministic date/time utilities using `java.time` (API 26+).
  */
 object DateFormatter {
+
+    private val shortDateFormatters = ConcurrentHashMap<Locale, DateTimeFormatter>()
+    private val monthYearFormatters = ConcurrentHashMap<Locale, DateTimeFormatter>()
 
     fun toLocalDate(
         epochMillis: Long,
@@ -48,7 +52,9 @@ object DateFormatter {
         locale: Locale = Locale.getDefault(),
         zoneId: ZoneId = ZoneId.systemDefault(),
     ): String {
-        val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)
+        val formatter = shortDateFormatters.computeIfAbsent(locale) {
+            DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(it)
+        }
         return toLocalDate(epochMillis, zoneId).format(formatter)
     }
 
@@ -57,7 +63,9 @@ object DateFormatter {
         locale: Locale = Locale.getDefault(),
         zoneId: ZoneId = ZoneId.systemDefault(),
     ): String {
-        val formatter = DateTimeFormatter.ofPattern("MMMM yyyy", locale)
+        val formatter = monthYearFormatters.computeIfAbsent(locale) {
+            DateTimeFormatter.ofPattern("MMMM yyyy", it)
+        }
         return toLocalDate(epochMillis, zoneId).format(formatter)
     }
 }

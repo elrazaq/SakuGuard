@@ -18,9 +18,13 @@ import com.sakuguard.app.domain.model.WithdrawalTarget
 import com.sakuguard.app.domain.repository.CategoryRepository
 import com.sakuguard.app.domain.repository.GoalRepository
 import com.sakuguard.app.domain.repository.TransactionRepository
+import com.sakuguard.app.domain.repository.WalletLedgerTotals
 import com.sakuguard.app.domain.repository.WalletRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
 import java.util.UUID
 import javax.inject.Inject
 
@@ -58,12 +62,12 @@ class ObserveGoalsPortfolioUseCase @Inject constructor(
         goalRepository.observeGoals(includeArchived = true),
         goalRepository.observeAllocations(),
         walletRepository.observeWallets(includeArchived = true),
-        transactionRepository.observeTransactions(),
-    ) { goals, allocations, wallets, transactions ->
+        transactionRepository.observeAllWalletLedgerTotals(),
+    ) { goals, allocations, wallets, totalsByWallet ->
         val summaries = goals.map { FinancialEngine.summarizeGoal(it, allocations) }
-        val overview = FinancialEngine.calculateFinancialOverview(
+        val overview = FinancialEngine.calculateFinancialOverviewFromTotals(
             wallets = wallets,
-            transactions = transactions,
+            totalsByWallet = totalsByWallet,
             goals = goals,
             allocations = allocations,
         )
@@ -73,7 +77,7 @@ class ObserveGoalsPortfolioUseCase @Inject constructor(
             archivedGoals = summaries.filter { it.goal.status == GoalStatus.ARCHIVED },
             overview = overview,
         )
-    }
+    }.distinctUntilChanged().flowOn(Dispatchers.Default)
 }
 
 class ObserveGoalDetailUseCase @Inject constructor(
@@ -85,8 +89,8 @@ class ObserveGoalDetailUseCase @Inject constructor(
         goalRepository.observeGoals(includeArchived = true),
         goalRepository.observeAllocations(),
         walletRepository.observeWallets(includeArchived = true),
-        transactionRepository.observeTransactions(),
-    ) { goals, allocations, wallets, transactions ->
+        transactionRepository.observeAllWalletLedgerTotals(),
+    ) { goals, allocations, wallets, totalsByWallet ->
         val goal = goals.firstOrNull { it.id == goalId } ?: return@combine null
         val summary = FinancialEngine.summarizeGoal(goal, allocations)
         val progress = FinancialEngine.calculateGoalProgressPermille(
@@ -103,7 +107,10 @@ class ObserveGoalDetailUseCase @Inject constructor(
             .map { entry -> GoalHistoryItem(entry = entry, wallet = walletMap[entry.walletId]) }
         val activeWallets = wallets
             .filterNot { it.isArchived }
-            .map { FinancialEngine.summarizeWallet(it, transactions, allocations) }
+            .map { wallet ->
+                val totals = totalsByWallet[wallet.id] ?: WalletLedgerTotals(wallet.id, 0L, 0L, 0L, 0L)
+                FinancialEngine.summarizeWalletFromTotals(wallet, totals, allocations)
+            }
         GoalDetail(
             summary = summary,
             progressPermille = progress,
@@ -111,7 +118,7 @@ class ObserveGoalDetailUseCase @Inject constructor(
             history = history,
             activeWallets = activeWallets,
         )
-    }
+    }.distinctUntilChanged().flowOn(Dispatchers.Default)
 }
 
 class CreateGoalUseCase @Inject constructor(

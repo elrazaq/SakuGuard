@@ -46,6 +46,12 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE id = :id")
     suspend fun getTransactionById(id: String): TransactionEntity?
 
+    @Query("SELECT * FROM transactions WHERE id = :id LIMIT 1")
+    fun observeTransactionById(id: String): Flow<TransactionEntity?>
+
+    @Query("SELECT MIN(transactionDate) FROM transactions WHERE walletId = :walletId OR destinationWalletId = :walletId")
+    suspend fun getEarliestTransactionDateForWallet(walletId: String): Long?
+
     @Query(
         """
         SELECT :walletId AS walletId,

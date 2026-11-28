@@ -15,8 +15,12 @@ object CurrencyFormatter {
         decimalSeparator = ','
     }
 
+    private val threadLocalFormatter = ThreadLocal.withInitial {
+        DecimalFormat("#,##0", indonesianSymbols)
+    }
+
     fun formatIdr(amount: Long): String {
-        val formatter = DecimalFormat("#,##0", indonesianSymbols)
+        val formatter = requireNotNull(threadLocalFormatter.get())
         val formattedNumber = formatter.format(abs(amount))
         return if (amount < 0) "-Rp$formattedNumber" else "Rp$formattedNumber"
     }

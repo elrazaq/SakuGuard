@@ -8,9 +8,13 @@ import com.sakuguard.app.domain.model.Wallet
 import com.sakuguard.app.domain.model.WalletSummary
 import com.sakuguard.app.domain.repository.GoalRepository
 import com.sakuguard.app.domain.repository.TransactionRepository
+import com.sakuguard.app.domain.repository.WalletLedgerTotals
 import com.sakuguard.app.domain.repository.WalletRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 data class WalletPortfolio(
@@ -36,16 +40,17 @@ class ObserveWalletPortfolioUseCase @Inject constructor(
 ) {
     operator fun invoke(): Flow<WalletPortfolio> = combine(
         walletRepository.observeWallets(includeArchived = true),
-        transactionRepository.observeTransactions(),
+        transactionRepository.observeAllWalletLedgerTotals(),
         goalRepository.observeGoals(includeArchived = true),
         goalRepository.observeAllocations(),
-    ) { wallets, transactions, goals, allocations ->
+    ) { wallets, totalsByWallet, goals, allocations ->
         val summaries = wallets.map { wallet ->
-            FinancialEngine.summarizeWallet(wallet, transactions, allocations)
+            val totals = totalsByWallet[wallet.id] ?: WalletLedgerTotals(wallet.id, 0L, 0L, 0L, 0L)
+            FinancialEngine.summarizeWalletFromTotals(wallet, totals, allocations)
         }
-        val overview = FinancialEngine.calculateFinancialOverview(
+        val overview = FinancialEngine.calculateFinancialOverviewFromTotals(
             wallets = wallets,
-            transactions = transactions,
+            totalsByWallet = totalsByWallet,
             goals = goals,
             allocations = allocations,
         )
@@ -54,7 +59,7 @@ class ObserveWalletPortfolioUseCase @Inject constructor(
             archivedWallets = summaries.filter { it.wallet.isArchived },
             overview = overview,
         )
-    }
+    }.distinctUntilChanged().flowOn(Dispatchers.Default)
 }
 
 class ObserveWalletDetailUseCase @Inject constructor(
@@ -64,12 +69,13 @@ class ObserveWalletDetailUseCase @Inject constructor(
 ) {
     operator fun invoke(walletId: String): Flow<WalletDetail?> = combine(
         walletRepository.observeWallets(includeArchived = true),
-        transactionRepository.observeTransactions(),
+        transactionRepository.observeAllWalletLedgerTotals(),
         goalRepository.observeGoals(includeArchived = true),
         goalRepository.observeAllocations(),
-    ) { wallets, transactions, goals, allocations ->
+    ) { wallets, totalsByWallet, goals, allocations ->
         val wallet = wallets.firstOrNull { it.id == walletId } ?: return@combine null
-        val summary = FinancialEngine.summarizeWallet(wallet, transactions, allocations)
+        val totals = totalsByWallet[wallet.id] ?: WalletLedgerTotals(wallet.id, 0L, 0L, 0L, 0L)
+        val summary = FinancialEngine.summarizeWalletFromTotals(wallet, totals, allocations)
         val goalAllocations = goals.mapNotNull { goal ->
             val allocated = FinancialEngine.calculateGoalAllocatedInWallet(
                 goalId = goal.id,
@@ -79,7 +85,7 @@ class ObserveWalletDetailUseCase @Inject constructor(
             if (allocated > 0L) WalletGoalAllocationItem(goal = goal, allocatedAmount = allocated) else null
         }
         WalletDetail(summary = summary, goalAllocations = goalAllocations)
-    }
+    }.distinctUntilChanged().flowOn(Dispatchers.Default)
 }
 
 class CreateWalletUseCase @Inject constructor(
@@ -108,15 +114,13 @@ class UpdateWalletUseCase @Inject constructor(
         transactionRepository.runInTransaction {
             val existing = walletRepository.getWalletById(normalized.id)
                 ?: throw DomainException.EntityNotFoundException("Wallet not found: ${normalized.id}")
-            val transactions = transactionRepository.getAllTransactions()
-            for (tx in transactions) {
-                if ((tx.walletId == existing.id || tx.destinationWalletId == existing.id) &&
-                    LedgerValidator.isBeforeTrackingDay(tx.transactionDate, normalized.trackingStartDate)
-                ) {
-                    throw DomainException.PreTrackingDateException(
-                        "Existing transaction ${tx.id} precedes new tracking start date",
-                    )
-                }
+            val earliestTxDate = transactionRepository.getEarliestTransactionDateForWallet(existing.id)
+            if (earliestTxDate != null &&
+                LedgerValidator.isBeforeTrackingDay(earliestTxDate, normalized.trackingStartDate)
+            ) {
+                throw DomainException.PreTrackingDateException(
+                    "Existing transaction precedes new tracking start date",
+                )
             }
             walletRepository.updateWallet(normalized)
             LedgerValidator.validateAffectedWallets(

@@ -58,3 +58,7 @@
 
 ## TD-016: Release Privacy (`FLAG_SECURE`), R8 Verification & Secret-Free Signing Hook
 - **Decision**: Apply `WindowManager.LayoutParams.FLAG_SECURE` only when `!BuildConfig.DEBUG` so debug builds remain testable while release builds protect recent-apps thumbnails. Configure release signing optionally via gitignored `keystore.properties` or `SAKUGUARD_KEYSTORE_*` environment variables, and verify both `assembleRelease` and `bundleRelease` with R8 enabled in GitHub Actions CI.
+
+## TD-017: Background Flow Offloading & Bounded Portfolio/Detail Observation
+- **Decision**: All reactive `combine` UseCases (`Dashboard`, `Wallets`, `Goals`, `Budgets`, `Reports`, `TransactionDetail`) apply `.distinctUntilChanged().flowOn(Dispatchers.Default)` so `FinancialEngine` and mapping work never run on `Dispatchers.Main.immediate`.
+- **Decision**: Replace `observeTransactions()` in `Wallets`, `Goals`, and `TransactionDetail` with `observeAllWalletLedgerTotals()` (`*FromTotals` engine methods) and `observeTransactionById(id)`. Cache `DecimalFormat` per thread (`ThreadLocal`) and `DateTimeFormatter` per `Locale`.

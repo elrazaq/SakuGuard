@@ -14,7 +14,7 @@ import com.sakuguard.app.domain.model.WalletType
 import com.sakuguard.app.domain.usecase.AllocateToGoalUseCase
 import com.sakuguard.app.domain.usecase.DeleteTransactionUseCase
 import com.sakuguard.app.domain.usecase.InMemoryLedgerStore
-import com.sakuguard.app.domain.usecase.ObserveTransactionsFeedUseCase
+import com.sakuguard.app.domain.usecase.ObserveTransactionDetailUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -55,7 +55,7 @@ class TransactionDetailViewModelTest {
 
         val vm = TransactionDetailViewModel(
             savedStateHandle = SavedStateHandle(mapOf("transactionId" to allocTxId)),
-            observeTransactionsFeedUseCase = ObserveTransactionsFeedUseCase(store, store, store),
+            observeTransactionDetailUseCase = ObserveTransactionDetailUseCase(store, store, store),
             deleteTransactionUseCase = DeleteTransactionUseCase(store, store, store),
         )
         val job = backgroundScope.launch { vm.uiState.collect() }
